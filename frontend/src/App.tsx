@@ -16,7 +16,7 @@ function App() {
 
   return (
     <div>
-      <h1>Hello World!</h1>
+      <h1 className='text-orange-500'>Hello World!</h1>
       <button onClick={fetchData}>Fetch Data</button>
       {data ? (
         <pre>{data.message}</pre>
