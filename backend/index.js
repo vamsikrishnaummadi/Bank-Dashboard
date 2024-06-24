@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
+import userRoutes from "./routes/user.route.js";
 
 dotenv.config();
 const app = express();
@@ -12,9 +14,18 @@ app.get("/api", (req,res) => {
     res.status(200).json({"message" : "Welcome to Bank Dashboard Api" });
 })
 
+app.use("/api/auth", userRoutes);
+
 // Running Port of API
 app.listen(5000, () => {
     console.log("API Running at http://localhost:5000");
+});
+
+// mongodb database connection 
+mongoose.connect(process.env.MONGODB_URL).then(() => {
+    console.log("MongoDB Succefully connected");
+}).catch((err) => {
+    console.log(err);
 });
 
 // Middleware to handle errors 
