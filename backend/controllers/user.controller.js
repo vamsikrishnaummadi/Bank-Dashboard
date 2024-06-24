@@ -7,25 +7,8 @@ import {generateAccountNumber} from "../utils/accountNumber.js";
 
 
 export const signup = async(req, res, next) => {
-    const {userType,
-        fullName, 
-        userName,
-        email,
-        password,
-        dateOfBirth,
-        profileImage,
-        presentAddress,
-        permanentAddress,
-        city,
-        postalCode,
-        country,
-        currency,
-        timeZone,
-        enabletwoFactorAuthentication,
-        recentPasswordChangedTime,
-        enableRecomendations,
-        enableNotifications,
-        enableDigitalCurrency} = req.body;
+
+    const {userName,email, password, ...rest} = req.body;
 
         let accountNumber;
         let isUnique = false;
@@ -38,14 +21,7 @@ export const signup = async(req, res, next) => {
             isUnique = true;
           }
         }
-
-        if (userType === "" || fullName === "" || userName === "" || email === "" || password === "" || dateOfBirth === "" || profileImage === "" || 
-            presentAddress === "" || permanentAddress === "" || city === "" || postalCode === "" || country === "" || currency === "" || timeZone === "" || enabletwoFactorAuthentication === ""
-            || enableRecomendations === "" || enableNotifications === "" || enableDigitalCurrency === ""  
-         ) {
-            return next(errorHandler(400, "All fields are required"));
-         }
-
+        
         const ExistingUser = await User.findOne({
             $or : [
                 {email : email},
@@ -66,28 +42,19 @@ export const signup = async(req, res, next) => {
         const hashedPassword = bcryptjs.hashSync(password, 10);
 
         const newUser = new User({
-            userType,
-            accountNumber,
-            balance : 0,
-            fullName, 
             userName,
             email,
+            accountNumber,
+            balance : 0,
             password : hashedPassword,
-            dateOfBirth,
-            profileImage,
-            presentAddress,
-            permanentAddress,
-            city,
-            postalCode,
-            country,
-            currency,
-            timeZone,
-            enabletwoFactorAuthentication : enabletwoFactorAuthentication || false,
+            enabletwoFactorAuthentication : false,
             recentPasswordChangedTime: new Date(),
-            enableRecomendations : enableRecomendations || false,
-            enableNotifications : enableRecomendations || false,
-            enableDigitalCurrency : enableDigitalCurrency || false,
-            favourites : ""
+            enableRecomendations : false,
+            enableNotifications : false,
+            enableDigitalCurrency : false,
+            requestedForDelete : false,
+            favourites : "",
+            ...rest
         });
 
         try {
@@ -134,4 +101,121 @@ export const signin = async(req, res, next) => {  // email or username
         }catch(err) {
             next(err);
         }
+};
+
+export const getUsers = async(req, res, next) => {
+    try {
+        const { page = 1, limit = 25 } = req.query;
+        const users = await User.find().select('-password')
+        .limit(parseInt(limit))
+        .skip((page - 1) * limit);
+
+        // Get total count of users for pagination info
+        const count = await User.countDocuments();
+
+        res.status(200).json({
+          success: true,
+          total: count,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          data: users
+        });
+      } catch (error) {
+         console.log(error);
+      }
+};
+
+export const getUserByAccountNumber = async (req, res, next) => {
+    const { id } = req.params;
+    if (!id) {
+        return next(errorHandler(400, 'Account Number is required'));
+    }
+    
+    try {
+        const validUser = await User.findOne({accountNumber : id}).select("-password");
+
+        if (!validUser) {
+            return next(errorHandler(404, 'User not found'));
+        }
+        
+        res.status(200).json({
+            success: true,
+            data : validUser
+        })
+    }catch(error) {
+       next(error);
+    }
+};
+
+export const updateUser = async(req, res, next) => {
+    const modifyUser = req.body;
+    const { id } = req.params;
+    if (!id) {
+        return next(errorHandler(400, 'Account Number is required'));
+    }
+
+    try {
+        const validUser = await User.findOne({accountNumber : id}).select("-password");
+
+        if (!validUser) {
+            return next(errorHandler(404, 'User not found'));
+        }
+
+        validUser.userType = modifyUser.userType || validUser.userType;
+        validUser.fullName = modifyUser.fullName || validUser.fullName; 
+        validUser.userName = modifyUser.userName || validUser.userName;
+        validUser.email = modifyUser.email || validUser.email;
+        validUser.dateOfBirth = modifyUser.dateOfBirth || validUser.dateOfBirth;
+        validUser.profileImage = modifyUser.profileImage || validUser.profileImage;
+        validUser.presentAddress = modifyUser.presentAddress || validUser.presentAddress;
+        validUser.permanentAddress = modifyUser.permanentAddress || validUser.permanentAddress;
+        validUser.city = modifyUser.city || validUser.city;
+        validUser.postalCode = modifyUser.postalCode || validUser.postalCode;
+        validUser.country = modifyUser.country || validUser.country;
+        validUser.currency = modifyUser.currency || validUser.currency;
+        validUser.timeZone = modifyUser.timeZone || validUser.timeZone;
+        validUser.enabletwoFactorAuthentication = modifyUser.enabletwoFactorAuthentication || validUser.enabletwoFactorAuthentication;
+        validUser.enableRecomendations = modifyUser.enableRecomendations || validUser.enableRecomendations;
+        validUser.enableNotifications = modifyUser.enableNotifications || validUser.enableNotifications;
+        validUser.enableDigitalCurrency = modifyUser.enableDigitalCurrency || validUser.enableDigitalCurrency;
+        validUser.favourites  = modifyUser.favourites || validUser.favourites;
+
+        const updatedUser = await validUser.save();
+
+        res.status(200).json({
+            success : true,
+            data : updatedUser
+        });
+
+    }catch(err) {
+        next(err);
+    }
+};
+
+export const deleteUser = async(req, res, next) => {
+    const { id } = req.params;
+    if (!id) {
+        return next(errorHandler(400, 'Account Number is required'));
+    }
+
+    try {
+        const validUser = await User.findOne({accountNumber : id}).select("-password");
+
+        if (!validUser) {
+            return next(errorHandler(404, 'User not found'));
+        }
+
+       validUser.requestedForDelete = true;
+
+       const updatedUser = await validUser.save();
+
+        res.status(200).json({
+            success : true,
+            data : {
+                message : "your request to delete account was processed."
+            }
+        });
+    }catch(err) {
+        next(err);
+    }
 };
