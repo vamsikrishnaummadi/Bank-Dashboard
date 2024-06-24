@@ -117,7 +117,7 @@ Failed Response :
 
 ## USER API 
 
-### USERS 
+#### GET USERS 
 
 ```http
 GET /api/users?page=1&limit=25
@@ -189,6 +189,7 @@ Success Response :
 	]
 }
 ```
+#### GET USER BY ACCOUNT NUMBER
 
 ```http
 GET /api/users/568134727900
@@ -227,6 +228,7 @@ Success Response :
 }
 ```
 
+#### UPDATE USER BY ACCOUNT NUMBER
 
 ```http
 PUT /api/users/568134727900
@@ -274,6 +276,7 @@ Success Response :
 		}
 }
 ```
+#### DELETE USER BY ACCOUNT NUMBER
 
 ```http
 DELETE /api/users/568134727900
