@@ -1,6 +1,7 @@
-const Notification = require('../models/notification.model') 
+import Notification from '../models/notification.model';
+import { errorHandler } from '../utils/errorhandler';
 
-exports.createNotification = async(req,res) =>{
+export const createNotification = async(req,res,next) =>{
     const {userId, message} = req.body; 
     try{
         const notification = new Notification({userId, message}); 
@@ -8,17 +9,17 @@ exports.createNotification = async(req,res) =>{
         req.io.to(userId).emit('notification', notification); 
         res.status(201).send(notification);
     }catch (error){
-        res.status(500).send(error);
+        next(errorHandler(500, "Failed to create notification"));
     }
 };  
 
 
-exports.getNotifications = async (req, res) => {
+export const getNotifications = async (req, res, next) => {
     const { userId } = req.params;
     try {
         const notifications = await Notification.find({ userId });
         res.send(notifications);
     } catch (error) {
-        res.status(500).send(error);
+        next(errorHandler(500, "Failed to retrieve notifications"));
     }
 };
