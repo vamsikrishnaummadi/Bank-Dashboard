@@ -14,7 +14,7 @@ app.get("/api", (req,res) => {
     res.status(200).json({"message" : "Welcome to Bank Dashboard Api" });
 })
 
-app.use("/api", userRoutes);
+app.use("/api/auth", userRoutes);
 
 // Running Port of API
 app.listen(5000, () => {
