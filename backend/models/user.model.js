@@ -90,6 +90,10 @@ const userSchema = new mongoose.Schema({
        },
        favourites : {
          type: String,
+       },
+       requestedForDelete : {
+         type: Boolean,
+         required: true
        }
        
 });
@@ -120,5 +124,6 @@ export default User;
    enableNotifications
    enableDigitalCurrency
    favourites : "userids string"
+   requestedForDelete
 */
 

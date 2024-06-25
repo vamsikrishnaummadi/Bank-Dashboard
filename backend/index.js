@@ -14,7 +14,7 @@ app.get("/api", (req,res) => {
     res.status(200).json({"message" : "Welcome to Bank Dashboard Api" });
 })
 
-app.use("/api/auth", userRoutes);
+app.use("/api", userRoutes);
 
 // Running Port of API
 app.listen(5000, () => {
@@ -25,7 +25,7 @@ app.listen(5000, () => {
 mongoose.connect(process.env.MONGODB_URL).then(() => {
     console.log("MongoDB Succefully connected");
 }).catch((err) => {
-    console.log(err);
+    console.log(err); 
 });
 
 // Middleware to handle errors 
