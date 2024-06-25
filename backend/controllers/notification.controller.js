@@ -2,12 +2,11 @@ import Notification from '../models/notification.model.js';
 import { errorHandler } from "../middlewares/error.js";;
 
 export const createNotification = async(req,res,next) =>{
-    const {userId, message} = req.body; 
+    const notifi = req.body; 
     try{
-        const notification = new Notification({userId, message}); 
-        await notification.save(); 
-        req.io.to(userId).emit('notification', notification); 
-        res.status(201).send(notification);
+        const notification = new Notification(notifi); 
+        const sample = await notification.save(); 
+        res.status(201).json(sample);
     }catch (error){
         next(errorHandler(500, "Failed to create notification"));
     }
