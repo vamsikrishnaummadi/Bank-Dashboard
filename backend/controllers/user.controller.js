@@ -155,38 +155,20 @@ export const updateUser = async(req, res, next) => {
     }
 
     try {
-        const validUser = await User.findOne({accountNumber : id}).select("-password");
+        const updatedUser = await User.findOneAndUpdate(
+            { accountNumber: id },
+            { $set: modifyUser },
+            { new: true, runValidators: true, select: '-password' }
+        );
 
-        if (!validUser) {
+        if (!updatedUser) {
             return next(errorHandler(404, 'User not found'));
         }
 
-        validUser.userType = modifyUser.userType || validUser.userType;
-        validUser.fullName = modifyUser.fullName || validUser.fullName; 
-        validUser.userName = modifyUser.userName || validUser.userName;
-        validUser.email = modifyUser.email || validUser.email;
-        validUser.dateOfBirth = modifyUser.dateOfBirth || validUser.dateOfBirth;
-        validUser.profileImage = modifyUser.profileImage || validUser.profileImage;
-        validUser.presentAddress = modifyUser.presentAddress || validUser.presentAddress;
-        validUser.permanentAddress = modifyUser.permanentAddress || validUser.permanentAddress;
-        validUser.city = modifyUser.city || validUser.city;
-        validUser.postalCode = modifyUser.postalCode || validUser.postalCode;
-        validUser.country = modifyUser.country || validUser.country;
-        validUser.currency = modifyUser.currency || validUser.currency;
-        validUser.timeZone = modifyUser.timeZone || validUser.timeZone;
-        validUser.enabletwoFactorAuthentication = modifyUser.enabletwoFactorAuthentication || validUser.enabletwoFactorAuthentication;
-        validUser.enableRecomendations = modifyUser.enableRecomendations || validUser.enableRecomendations;
-        validUser.enableNotifications = modifyUser.enableNotifications || validUser.enableNotifications;
-        validUser.enableDigitalCurrency = modifyUser.enableDigitalCurrency || validUser.enableDigitalCurrency;
-        validUser.favourites  = modifyUser.favourites || validUser.favourites;
-
-        const updatedUser = await validUser.save();
-
         res.status(200).json({
-            success : true,
-            data : updatedUser
+            success: true,
+            data: updatedUser
         });
-
     }catch(err) {
         next(err);
     }
