@@ -16,9 +16,23 @@ export const createNotification = async(req,res,next) =>{
 
 export const getNotifications = async (req, res, next) => {
     const { userId } = req.params;
+    const {page=1, limit= 10} = req.query;
+
     try {
-        const notifications = await Notification.find({ userId });
-        res.send(notifications);
+        const notifications = await Notification.find({ userId })
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+            .sort({ createdAt: -1 }); 
+
+        const totalNotifications = await Notification.countDocuments({ userId });
+        const totalPages = Math.ceil(totalNotifications / limit);
+
+        res.send({
+            notifications,
+            totalPages,
+            currentPage: parseInt(page),
+            totalNotifications
+        });
     } catch (error) {
         next(errorHandler(500, "Failed to retrieve notifications"));
     }
