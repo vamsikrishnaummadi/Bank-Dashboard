@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import userRoutes from "./routes/user.route.js";
+import notifictaionRoutes from "./routes/notification.route.js";
+
 
 dotenv.config();
 const app = express();
@@ -15,6 +17,7 @@ app.get("/api", (req,res) => {
 })
 
 app.use("/api/auth", userRoutes);
+app.use('/api/notifications',notifictaionRoutes); 
 
 // Running Port of API
 app.listen(5000, () => {

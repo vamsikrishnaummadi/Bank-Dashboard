@@ -1,5 +1,5 @@
-import Notification from '../models/notification.model';
-import { errorHandler } from '../utils/errorhandler';
+import Notification from '../models/notification.model.js';
+import { errorHandler } from "../middlewares/error.js";;
 
 export const createNotification = async(req,res,next) =>{
     const {userId, message} = req.body; 
