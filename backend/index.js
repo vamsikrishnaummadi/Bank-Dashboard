@@ -4,6 +4,8 @@ import express from "express";
 import mongoose from "mongoose";
 import transactionRoutes from "./routes/transaction.route.js";
 import userRoutes from "./routes/user.route.js";
+import notifictaionRoutes from "./routes/notification.route.js";
+
 
 dotenv.config();
 const app = express();
