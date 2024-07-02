@@ -4,6 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import transactionRoutes from "./routes/transaction.route.js";
 import userRoutes from "./routes/user.route.js";
+import investmentRoutes from "./routes/investment.route.js";
 
 dotenv.config();
 const app = express();
@@ -15,7 +16,7 @@ app.get("/api", (req, res) => {
   res.status(200).json({ message: "Welcome to Bank Dashboard Api" });
 });
 
-app.use("/api", userRoutes, transactionRoutes);
+app.use("/api", userRoutes, transactionRoutes, investmentRoutes);
 
 // Running Port of API
 app.listen(5000, () => {

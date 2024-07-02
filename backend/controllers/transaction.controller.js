@@ -12,7 +12,7 @@ export const createTransaction = async (req, res, next) => {
       session
     );
     let balanceAfter;
-    if (type === "expense") {
+    if (type === "expense" || type === "investment") {
       balanceAfter = user.balance - amount;
       if (balanceAfter < 0) {
         return next(
