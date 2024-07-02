@@ -2,9 +2,11 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
+import loanSchemas from "./routes/loan.route.js";
+import notifictaionRoutes from "./routes/notification.route.js";
 import transactionRoutes from "./routes/transaction.route.js";
 import userRoutes from "./routes/user.route.js";
-import notifictaionRoutes from "./routes/notification.route.js";
+
 
 
 dotenv.config();
@@ -18,6 +20,8 @@ app.get("/api", (req, res) => {
 });
 
 app.use("/api", userRoutes, transactionRoutes);
+app.use("/api/notifications", notifictaionRoutes); 
+app.use("/api/loans", loanSchemas);
 
 // Running Port of API
 app.listen(5000, () => {
