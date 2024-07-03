@@ -1,29 +1,37 @@
-import { useState } from 'react';
-
-interface dataType {
-  message: string
-}
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Accounts from "./components/Accounts";
+import CreditCards from "./components/CreditCards";
+import Investments from "./components/Investments";
+import Loans from "./components/Loans";
+import MyPrivileges from "./components/MyPrivileges";
+import Overview from "./components/Overview";
+import Services from "./components/Services";
+import Settings from "./components/Settings";
+import Transactions from "./components/Transactions";
+import Header from "./components/header";
+import Sidebar from "./components/sidebar";
 
 function App() {
-  const [data, setData] = useState<dataType | null>(null);
-
-  const fetchData = () => {
-    fetch('/api')
-      .then(response => response.json())
-      .then(json => setData(json))
-      .catch(error => console.log('Error fetching data:', error));
-  };
-
   return (
-    <div>
-      <h1 className='text-orange-500'>Hello World!</h1>
-      <button onClick={fetchData}>Fetch Data</button>
-      {data ? (
-        <pre>{data.message}</pre>
-      ) : (
-        <p>No data yet. Click the button to fetch data.</p>
-      )}
-    </div>
+    <BrowserRouter>
+      <div>
+        <Sidebar />
+        <div>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Overview />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/accounts" element={<Accounts />} />
+            <Route path="/investments" element={<Investments />} />
+            <Route path="/credit-cards" element={<CreditCards />} />
+            <Route path="/loans" element={<Loans />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/my-privileges" element={<MyPrivileges />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+        </div>
+      </div>
+    </BrowserRouter>
   );
 }
 

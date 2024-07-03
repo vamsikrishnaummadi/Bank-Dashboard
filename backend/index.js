@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
+import cardRoutes from "./routes/card.route.js";
 import transactionRoutes from "./routes/transaction.route.js";
 import userRoutes from "./routes/user.route.js";
 
@@ -15,7 +16,7 @@ app.get("/api", (req, res) => {
   res.status(200).json({ message: "Welcome to Bank Dashboard Api" });
 });
 
-app.use("/api", userRoutes, transactionRoutes);
+app.use("/api", userRoutes, transactionRoutes, cardRoutes);
 
 // Running Port of API
 app.listen(5000, () => {
