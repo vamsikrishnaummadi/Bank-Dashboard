@@ -340,7 +340,7 @@ Failure Response:
 #### GET TRANSACTIONS
 
 ```http
-POST /api/transactions/batch?page=1&limit=25
+POST /api/transactions?page=1&limit=25
 ```
 
 Request Body:
@@ -411,6 +411,142 @@ Success Response:
 		"invoice": "this is a test invoice",
 		"type": "income",
 		"accountNumber": 764867188663,
+		"__v": 0
+	}
+}
+```
+
+## CARD API
+
+#### CREATE CARD
+
+```http
+POST /api/cards/create
+```
+
+Request Body:
+
+```javascript
+{
+	"accountNumber": 568134727900,
+	"cardHolderName": "John Doe 3"
+}
+```
+
+Success Response:
+
+```javascript
+{
+	"success": true,
+	"message": "Card Created Successfully",
+	"data": {
+		"cardNumber": "0049942126632299",
+		"expirationDate": "07/27",
+		"cardHolderName": "John Doe 3",
+		"cvv": "424",
+		"accountNumber": 568134727900,
+		"blockCard": false,
+		"pin": "$2a$10$khyi/KTDSCb7IHZHCd/e8u6k1BxUOdh96Tdx5Zl5UpVaFJpCiaFt6",
+		"_id": "668281a7f76d59c2f3f9f7dd",
+		"createdAt": "2024-07-01T10:15:03.165Z",
+		"updatedAt": "2024-07-01T10:15:03.165Z",
+		"__v": 0
+	}
+}
+```
+
+#### GET CARDS
+
+```http
+POST /api/cards
+```
+
+Request Body:
+
+```javascript
+{
+	"accountNumber": 568134727900		// optional
+}
+```
+
+Success Response:
+
+```javascript
+{
+	"success": true,
+	"data": [
+		{
+			"_id": "667ea9c4d397f0a5c5245f96",
+			"cardNumber": "8831079608055851",
+			"expirationDate": "06/27",
+			"cardHolderName": "John Doe",
+			"cvv": "946",
+			"accountNumber": 568134727900,
+			"createdAt": "2024-06-28T12:17:08.439Z",
+			"updatedAt": "2024-06-28T12:17:08.439Z",
+			"__v": 0
+		},
+		{
+			"_id": "6682375ab63ce7778e8444b1",
+			"cardNumber": "6644763311199636",
+			"expirationDate": "07/27",
+			"cardHolderName": "John Doe 2",
+			"cvv": "484",
+			"accountNumber": 568134727900,
+			"createdAt": "2024-07-01T04:58:02.404Z",
+			"updatedAt": "2024-07-01T04:58:02.404Z",
+			"__v": 0
+		}
+	]
+}
+```
+
+#### GET CARD BY CARD NUMBER
+
+```http
+GET /api/cards/8831079608055851
+```
+
+Success Response:
+
+```javascript
+{
+	"success": true,
+	"data": {
+		"_id": "667ea9c4d397f0a5c5245f96",
+		"cardNumber": "8831079608055851",
+		"expirationDate": "06/27",
+		"cardHolderName": "John Doe",
+		"cvv": "946",
+		"accountNumber": 568134727900,
+		"createdAt": "2024-06-28T12:17:08.439Z",
+		"updatedAt": "2024-06-28T12:17:08.439Z",
+		"__v": 0
+	}
+}
+```
+
+#### DELETE CARD BY CARD NUMBER
+
+```http
+DELETE /api/cards/8831079608055851
+```
+
+Success Response:
+
+```javascript
+	{
+	"success": true,
+	"message": "Card deleted successfully.",
+	"data": {
+		"_id": "667ea9c4d397f0a5c5245f96",
+		"cardNumber": "8831079608055851",
+		"expirationDate": "06/27",
+		"cardHolderName": "John Doe",
+		"cvv": "946",
+		"accountNumber": 568134727900,
+		"createdAt": "2024-06-28T12:17:08.439Z",
+		"updatedAt": "2024-06-28T12:17:08.439Z",
 		"__v": 0
 	}
 }
