@@ -8,9 +8,13 @@ export const getInvestments = async (req, res, next) => {
     try {
         const {page = 1, limit = 25} = req.query;
         const investments = await Investment.find().limit(parseInt(limit)).skip((page - 1) * limit);
+        const count = await Investment.countDocuments();
         res.status(200).json({
             success: true,
-            data: investments
+            data: investments,
+            total: count,
+            limit,
+            page
         });
     } catch (err) {
         next(err);
@@ -70,12 +74,12 @@ export const createInvestment = async (req, res, next) => {
 
 // Update an existing investment
 export const updateInvestment = async (req, res, next) => {
-    const { accountNumber } = req.params;
+    const { investmentId } = req.params;
     const updateFields = req.body;
 
     try {
-        const updatedInvestment = await Investment.findOneAndUpdate(
-            { accountNumber},
+        const updatedInvestment = await Investment.findByIdAndUpdate(
+            investmentId,
             { $set: updateFields },
             { new: true, runValidators: true }
         );
