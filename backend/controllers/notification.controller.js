@@ -14,17 +14,17 @@ export const createNotification = async(req,res,next) =>{
 };  
 
 
-export const getNotifications = async (req, res, next) => {
-    const { acocuntNumber,id} = req.params;
+export const getNotificationsByAccountNumber = async (req, res, next) => {
+    const { accountNumber} = req.params;
     const {page=1, limit= 10} = req.query;
 
     try {
-        const notifications = await Notification.find({ acocuntNumber, id})
+        const notifications = await Notification.find({ accountNumber})
             .skip((page - 1) * limit)
             .limit(parseInt(limit))
             .sort({ createdAt: -1 }); 
 
-        const totalNotifications = await Notification.countDocuments({ acocuntNumber, id });
+        const totalNotifications = await Notification.countDocuments({ accountNumber});
         const totalPages = Math.ceil(totalNotifications / limit);
 
         res.send({
@@ -39,16 +39,18 @@ export const getNotifications = async (req, res, next) => {
 };  
 
 
-export const updateNotification = async(req,res,next)=>{
-    const {acocuntNumber, id} = req.params 
-    const updates = req.body
+export const updateNotification = async(req, res, next)=>{
+    const {notificationId} = req.params ;
+    const updateFields = req.body;
 
     try{
-        const notification = await Notification.findOneAndUpdate(acocuntNumber, updates,id, {new : true}); 
+        const notification = await Notification.findByIdAndUpdate({ _id : notificationId},
+            { $set: updateFields },); 
         if(!notification){
             return next(errorHandler(404, "Notification not found"))
         }
-        res.status(200).json(notification);
+        const updatedNotification = await notification.save();
+        res.status(200).json(updatedNotification);
     }catch(error){
         next(errorHandler(500, "Failed to update notification"));
     }
@@ -56,36 +58,17 @@ export const updateNotification = async(req,res,next)=>{
 
 
 export const deleteNotification = async (req, res, next) => {
-    const { id, accountNumber } = req.params;
+    const { accountNumber } = req.params;
 
     try {
-        const notification = await Notification.findByIdAndDelete(id, accountNumber);
+        const notification = await Notification.deleteMany({accountNumber});
         if (!notification) {
             return next(errorHandler(404, "Notification not found"));
         }
-        res.status(200).send({ message: "Notification deleted successfully" });
+        res.status(200).send({ message: "All Notifications deleted successfully" });
     } catch (error) {
         next(errorHandler(500, "Failed to delete notification"));
     }
 };
 
-
-
-
-export const deleteNotificationByAccountNumber = async (req, res, next) => {
-    const {id, accountNumber} = req.params;
-
-    try {
-       
-        const result = await Notification.deleteMany({id, accountNumber});
-        if (result.deletedCount === 0) {
-            
-            return next(errorHandler(404, "Notifications not found"));
-        }
-        res.status(200).send({ message: "Notifications deleted successfully", notifications: [] });
-    } catch (error) {
-        
-        next(errorHandler(500, "Failed to delete notifications"));
-    }
-};
 
