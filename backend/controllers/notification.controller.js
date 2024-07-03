@@ -72,22 +72,3 @@ export const deleteNotification = async (req, res, next) => {
 };
 
 
-
-
-export const deleteNotificationByAccountNumber = async (req, res, next) => {
-    const {id, accountNumber} = req.params;
-
-    try {
-       
-        const result = await Notification.deleteMany({id, accountNumber});
-        if (result.deletedCount === 0) {
-            
-            return next(errorHandler(404, "Notifications not found"));
-        }
-        res.status(200).send({ message: "Notifications deleted successfully", notifications: [] });
-    } catch (error) {
-        
-        next(errorHandler(500, "Failed to delete notifications"));
-    }
-};
-
