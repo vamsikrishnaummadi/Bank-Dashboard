@@ -18,9 +18,7 @@ app.get("/api", (req, res) => {
   res.status(200).json({ message: "Welcome to Bank Dashboard Api" });
 });
 
-app.use("/api", userRoutes, transactionRoutes);
-app.use("/api/notifications", notifictaionRoutes); 
-app.use("/api/loans", loanSchemas);
+app.use("/api", userRoutes, transactionRoutes, notifictaionRoutes, loanRoutes, investmentRoutes);
 
 // Running Port of API
 app.listen(5000, () => {
