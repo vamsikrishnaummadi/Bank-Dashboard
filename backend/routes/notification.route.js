@@ -3,9 +3,9 @@ import { createNotification, deleteNotification, deleteNotificationByAccountNumb
 
 const router = express.Router();
 
-router.post('/', createNotification); 
-router.get('/', getNotifications);
-router.delete('/:accountNumber', deleteNotificationByAccountNumber);
+router.post('/notifications', createNotification); 
+router.get('/notifications', getNotifications);
+router.delete('/notifications/:accountNumber', deleteNotificationByAccountNumber);
 router.put('/:accountNumber', updateNotification); 
 router.delete('/:accountNumber', deleteNotification);
 

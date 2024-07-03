@@ -19,7 +19,7 @@ export const createLoan = async (req, res, next) => {
 export const getLoans = async (req, res, next) => {
     const { accountNumber } = req.params;
     const { page = 1, limit = 10 } = req.query;
-
+    console.log("getLoans called with accountNumber:", accountNumber);
     try {
         const loans = await Loan.find({ accountNumber })
             .skip((page - 1) * limit)
@@ -51,7 +51,7 @@ export const updateLoan = async (req, res, next) => {
         const loan = await Loan.findByIdAndUpdate(
             id,
             { amount, interestRate, duration, startDate, endDate, status },
-            { new: true }
+            { new: true, overwrite: true}
         );
 
         if (!loan) {

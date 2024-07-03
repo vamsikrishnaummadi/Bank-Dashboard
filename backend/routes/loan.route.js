@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { createLoan, getLoans, updateLoan, deleteLoan } from '../controllers/loan.controller.js';
+import { createLoan, deleteLoan, getLoans, updateLoan } from '../controllers/loan.controller.js';
 
 const router = express.Router();
 
