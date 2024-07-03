@@ -13,10 +13,6 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  createdAt: {
-    type: Date,
-    required: true,
-  },
   description: {
     type: String,
     required: true,
@@ -33,7 +29,7 @@ const transactionSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-});
+},{timestamps: true});
 
 const Transaction = mongoose.model("transaction", transactionSchema);
 
