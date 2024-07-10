@@ -1,5 +1,5 @@
 const MyPrivileges = () => {
-  return <div>MyPrivileges</div>;
+  return <div></div>;
 };
 
 export default MyPrivileges;
