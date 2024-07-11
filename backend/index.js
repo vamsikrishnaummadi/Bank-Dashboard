@@ -7,6 +7,7 @@ import notifictaionRoutes from "./routes/notification.route.js";
 import transactionRoutes from "./routes/transaction.route.js";
 import investmentRoutes from "./routes/investment.route.js";
 import userRoutes from "./routes/user.route.js";
+import loanTypes from "./routes/loanType.route.js";
 
 dotenv.config();
 const app = express();
@@ -18,7 +19,7 @@ app.get("/api", (req, res) => {
   res.status(200).json({ message: "Welcome to Bank Dashboard Api" });
 });
 
-app.use("/api", userRoutes, transactionRoutes, notifictaionRoutes, loanRoutes, investmentRoutes);
+app.use("/api", userRoutes, transactionRoutes, notifictaionRoutes, loanRoutes, investmentRoutes,loanTypes);
 
 // Running Port of API
 app.listen(5000, () => {

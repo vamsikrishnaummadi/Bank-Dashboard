@@ -14,7 +14,7 @@ const loanSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    duration: { 
+    duration: {
         type: Number,
         required: true
     },
@@ -30,9 +30,14 @@ const loanSchema = new mongoose.Schema({
         type: String,
         enum: ['pending', 'approved', 'rejected'],
         default: 'pending'
-    }
+    },
+    loanType: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'LoanType',
+        required: true,
+    },
 }, {
-    timestamps: true 
+    timestamps: true
 });
 
 export default mongoose.model('Loan', loanSchema);
