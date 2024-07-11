@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post("/transactions/create", createTransaction);
 
-router.post("/transactions/batch", getTransactions);
+router.post("/transactions", getTransactions);
 
 router.get("/transactions/:transactionId", getTransactionById);
 
