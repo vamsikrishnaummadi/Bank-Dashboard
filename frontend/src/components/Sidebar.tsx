@@ -1,26 +1,18 @@
+// src/components/Sidebar.tsx
+import React from 'react';
 import {
-  Menu,
-  MenuButton,
-  MenuHeading,
-  MenuItem,
-  MenuItems,
-  MenuSection,
-} from "@headlessui/react";
-import {
-  BanknotesIcon,
-  Bars3Icon,
-  BookOpenIcon,
-  BriefcaseIcon,
-  Cog8ToothIcon,
-  CreditCardIcon,
   HomeIcon,
   Square2StackIcon,
   UserIcon,
-  UserPlusIcon,
+  BookOpenIcon,
+  CreditCardIcon,
+  BriefcaseIcon,
   WrenchScrewdriverIcon,
+  UserPlusIcon,
+  Cog8ToothIcon,
 } from "@heroicons/react/16/solid";
-import { Link, useLocation } from "react-router-dom";
-import useResizeListener from "../hooks/resizeListener";
+import logo from "../assets/Logo.svg";
+import { NavLink } from 'react-router-dom';
 
 const sideLinks = [
   {
@@ -70,61 +62,76 @@ const sideLinks = [
   },
 ];
 
-const Sidebar = () => {
-  const location = useLocation();
-  const path = location.pathname;
-  const { width } = useResizeListener();
+interface SidebarProps {
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+}
 
+const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   return (
-    <Menu>
-      {width && width < 480 && (
-        <MenuButton className="inline-flex items-center gap-2 rounded-md bg-gray-800 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-700 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
-          <Bars3Icon className="size-4 fill-white/60" />
-        </MenuButton>
-      )}
-      <MenuItems
-        className={`w-52 origin-top-right border border-black/2 bg-white p-1 text-sm/6 text-black transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0 ${
-          !width || width >= 480 ? "h-screen sticky" : "rounded-xl"
-        }`}
-        static={!width || width >= 480}
-        anchor="bottom start"
+    <aside className='md:w-56'>
+      {/* Sidebar for desktop */}
+      <div className="hidden md:flex md:flex-col md:w-56 md:h-screen md:fixed md:top-0 md:left-0 md:bg-white md:border-r md:border-gray-200 md:shadow-lg">
+        <div className="flex flex-col items-center justify-start px-5 py-2 h-14 border-b border-gray-200">
+          <button onClick={() => setSidebarOpen(false)} className="mb-2 text-[#1814F3] md:hidden">
+            Close
+          </button>
+          <NavLink to="/">
+              <img src={logo} alt="Logo" className="h-6" />
+          </NavLink>
+        </div>
+        <nav className="flex-1 p-4">
+          {sideLinks.map((link) => (
+            <NavLink
+              key={link.href}
+              to={link.href}
+              className={({ isActive }) =>
+                `flex items-center p-2 mb-2 text-gray-700 hover:bg-gray-100 rounded-md ${
+                  isActive ? 'bg-blue-100 border-l-4 border-[#1814F3] text-[#1814F3]' : ''
+                }`
+              }
+            >
+              <link.icon className="h-6 w-6 mr-3" />
+              {link.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+
+      {/* Sidebar for mobile */}
+      <div
+        className={`fixed inset-0 z-50 flex md:hidden bg-black bg-opacity-50 transform ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } transition-transform duration-200 ease-in-out`}
       >
-        <MenuSection>
-          <MenuHeading className="pl-3 text-left pb-3 pt-3">
-            <Link to="/">
-              <BanknotesIcon className="size-6 inline fill-indigo-600" />
-              <span className="pl-1 font-bold text-lg">BankDash.</span>
-            </Link>
-          </MenuHeading>
-          {sideLinks.map((navItem) => {
-            const isactive = navItem.href === path;
-            return (
-              <MenuItem key={navItem.href}>
-                <Link
-                  className={`group flex w-full items-center gap-2 rounded-sm py-1.5 px-3 data-[focus]:bg-white/10 ${
-                    isactive ? "border-l-2 border-indigo-600" : ""
-                  }`}
-                  to={navItem.href}
-                >
-                  <navItem.icon
-                    className={`size-5 ${
-                      isactive ? "fill-indigo-600" : "fill-slate-400"
-                    }`}
-                  />
-                  <span
-                    className={`font-medium ${
-                      isactive ? "text-indigo-600" : "text-slate-400"
-                    }`}
-                  >
-                    {navItem.label}
-                  </span>
-                </Link>
-              </MenuItem>
-            );
-          })}
-        </MenuSection>
-      </MenuItems>
-    </Menu>
+        <div className="w-56 bg-white shadow-lg p-4">
+          <button onClick={() => setSidebarOpen(false)} className="mb-2 text-[#1814F3]">
+            Close
+          </button>
+          <div className="flex items-center justify-center px-5 py-2 h-14 border-b border-gray-200">
+            <img src={logo} alt="Logo" className="h-8" />
+          </div>
+          <nav className="flex-1 p-2">
+            {sideLinks.map((link) => (
+              <NavLink
+                key={link.href}
+                to={link.href}
+                className={({ isActive }) =>
+                  `flex items-center p-2 mb-2 text-gray-700 hover:bg-gray-100 rounded-md ${
+                    isActive ? 'bg-blue-100 border-l-4 border-[#1814f3] text-[#1814F3]' : ''
+                  }`
+                }
+                onClick={() => setSidebarOpen(false)}
+              >
+                <link.icon className="h-6 w-6 mr-3" />
+                {link.label}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+        <div className="flex-1" onClick={() => setSidebarOpen(false)}></div>
+      </div>
+    </aside>
   );
 };
 
