@@ -1,5 +1,5 @@
 const Loans = () => {
-  return <div></div>;
+  return <div>yudywiusoqdwpfeiohug85y3r9eudwniscjdbih</div>;
 };
 
 export default Loans;
