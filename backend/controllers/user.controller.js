@@ -47,7 +47,7 @@ export const signup = async(req, res, next) => {
             accountNumber,
             balance : 0,
             password : hashedPassword,
-            enabletwoFactorAuthentication : false,
+            enabletwoFactorAuthentication : true,
             recentPasswordChangedTime: new Date(),
             enableRecomendations : false,
             enableNotifications : false,
@@ -122,13 +122,13 @@ export const getUsers = async(req, res, next) => {
 };
 
 export const getUserByAccountNumber = async (req, res, next) => {
-    const { id } = req.params;
-    if (!id) {
+    const { accountNumber } = req.params;
+    if (!accountNumber) {
         return next(errorHandler(400, 'Account Number is required'));
     }
     
     try {
-        const validUser = await User.findOne({accountNumber : id}).select("-password");
+        const validUser = await User.findOne({accountNumber}).select("-password");
 
         if (!validUser) {
             return next(errorHandler(404, 'User not found'));
@@ -145,14 +145,14 @@ export const getUserByAccountNumber = async (req, res, next) => {
 
 export const updateUser = async(req, res, next) => {
     const modifyUser = req.body;
-    const { id } = req.params;
-    if (!id) {
+    const { accountNumber } = req.params;
+    if (!accountNumber) {
         return next(errorHandler(400, 'Account Number is required'));
     }
 
     try {
         const updatedUser = await User.findOneAndUpdate(
-            { accountNumber: id },
+            { accountNumber },
             { $set: modifyUser },
             { new: true, runValidators: true, select: '-password' }
         );
@@ -171,13 +171,13 @@ export const updateUser = async(req, res, next) => {
 };
 
 export const deleteUser = async(req, res, next) => {
-    const { id } = req.params;
-    if (!id) {
+    const { accountNumber } = req.params;
+    if (!accountNumber) {
         return next(errorHandler(400, 'Account Number is required'));
     }
 
     try {
-        const validUser = await User.findOne({accountNumber : id}).select("-password");
+        const validUser = await User.findOne({accountNumber}).select("-password");
 
         if (!validUser) {
             return next(errorHandler(404, 'User not found'));
@@ -195,5 +195,47 @@ export const deleteUser = async(req, res, next) => {
         });
     }catch(err) {
         next(err);
+    }
+};
+
+export const updatePassword = async (req, res, next) => {
+    const { accountNumber } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!accountNumber) {
+        return next(errorHandler(400, 'Account Number is required'));
+    }
+
+    if (!currentPassword || !newPassword) {
+        return next(errorHandler(400, 'Both current and new passwords are required'));
+    }
+
+    try {
+        const user = await User.findOne({ accountNumber });
+
+        if (!user) {
+            return next(errorHandler(404, 'User not found'));
+        }
+
+        const isPasswordValid = bcryptjs.compareSync(currentPassword, user.password);
+
+        if (!isPasswordValid) {
+            return next(errorHandler(400, 'Current password is incorrect'));
+        }
+
+        const hashedNewPassword = bcryptjs.hashSync(newPassword, 10);
+
+        user.password = hashedNewPassword;
+        user.recentPasswordChangedTime = new Date();
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Password updated successfully'
+        });
+    } catch (error) {
+        console.log("gi")
+        next(error);
     }
 };

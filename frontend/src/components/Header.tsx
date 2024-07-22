@@ -1,12 +1,14 @@
 // src/components/Header.tsx
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import hamburger from "../assets/hamburger.svg";
 import notificationBell from "../assets/notificationBell.svg";
 import searchicon from "../assets/searchicon.svg";
 import settings from "../assets/settings.svg";
 import { RootState } from '../store/store';
+import { clearUser } from '../store/userSlice';
+import Cookies from "js-cookie";
 
 const getNavHeading = (path: string) => {
   if (path === "/") {
@@ -26,6 +28,7 @@ const Header: React.FC<{ setSidebarOpen: (open: boolean) => void}> = ({ setSideb
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const userData = useSelector((state: RootState) => state.user.userData);
   const navHeading = getNavHeading(location.pathname);
+  const dispatch = useDispatch();
 
   const notifications = [
     'Notification 1',
@@ -42,16 +45,28 @@ const Header: React.FC<{ setSidebarOpen: (open: boolean) => void}> = ({ setSideb
 
   const handleProfileMenuClick = () => {
     setShowProfileMenu(!showProfileMenu);
+    setShowNotifications(false);
   };
 
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
+    setShowProfileMenu(false);
   };
 
   const handleLogout = () => {
     // Implement logout functionality
-    console.log('Logged out');
+    Cookies.remove('access_token');
+    dispatch(clearUser());
+    navigate('/auth/signin');   
   };
+
+  const handleBlur = (setState: React.Dispatch<React.SetStateAction<boolean>>) => {
+    console.log('blurred');
+    setTimeout(() => {
+      setState(false);
+    }, 100);
+  };
+
 
   return (
     <header className="bg-white shadow-md px-4 py-2 flex justify-between items-center w-full z-10 border">
@@ -73,12 +88,17 @@ const Header: React.FC<{ setSidebarOpen: (open: boolean) => void}> = ({ setSideb
         <div className='rounded-full p-2 bg-lightgrey'>
             <img src={settings} alt="settings icon" className="w-4 h-4 text-gray-600 cursor-pointer hover:text-gray-800" onClick={handleSettingsClick} />
         </div>
-        <div className="relative">
+        <div className="relative" 
+              onClick={handleNotificationClick}
+        >
           <div className='rounded-full p-2 bg-lightgrey'>
-              <img src={notificationBell} alt="notification bell icon" className="w-4 h-4 text-gray-600 cursor-pointer hover:text-gray-800" onClick={handleNotificationClick} />
+              <img src={notificationBell} alt="notification bell icon" className="w-4 h-4 text-gray-600 cursor-pointer hover:text-gray-800" />
           </div>
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg">
+            <div
+              onBlur={() => handleBlur(setShowNotifications)}
+              className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg"
+            >
               <ul className="p-2">
                 {notifications.map((notification, index) => (
                   <li key={index} className="p-2 hover:bg-gray-100">{notification}</li>
@@ -90,15 +110,17 @@ const Header: React.FC<{ setSidebarOpen: (open: boolean) => void}> = ({ setSideb
             </div>
           )}
         </div>
-        <div className="relative">
-          <span
-            className="w-10 h-10 p-2 rounded-full border-2 bg-lightgrey border-gray-300 cursor-pointer hover:border-indigo-500 flex items-center justify-center text-lg font-bold"
+        <div className="relative" 
             onClick={handleProfileMenuClick}
-          >
+        >
+          <span
+            className="w-10 h-10 p-2 rounded-full border-2 bg-lightgrey border-gray-300 cursor-pointer hover:border-indigo-500 flex items-center justify-center text-lg font-bold">
             {userData?.user?.userName[0].toUpperCase()}
           </span>
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg">
+            <div 
+               onBlur={handleProfileMenuClick}
+              className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg">
               <ul className="p-2">
                 <li className="p-2 hover:bg-gray-100 cursor-pointer" onClick={handleSettingsClick}>Settings</li>
                 <li className="p-2 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>Logout</li>
