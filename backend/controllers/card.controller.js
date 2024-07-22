@@ -1,23 +1,23 @@
 import bcrypt from "bcryptjs";
-import { errorHandler } from "../middlewares/error.js";
+import mongoose from "mongoose";
 import Card from "../models/card.model.js";
 import User from "../models/user.model.js";
 import { generateCardNumber } from "../utils/cardNumber.js";
+import CustomError from "../utils/customError.js";
 import { calculateExpirationDate } from "../utils/expirationDate.js";
 
 export const createCard = async (req, res, next) => {
   const { accountNumber, cardHolderName } = req.body;
-
   try {
     if (!accountNumber) {
-      throw new Error("Account number is required!");
+      throw new CustomError(400, "Account number is required!");
     }
     if (!cardHolderName) {
-      throw new Error("Card holder name is required!");
+      throw new CustomError(400, "Card holder name is required!");
     }
     const user = await User.findOne({ accountNumber });
     if (!user) {
-      throw new Error("This account does not exist!");
+      throw new CustomError(404, "This Account does not exist!");
     }
     const cardNumber = await generateCardNumber();
     const expirationDate = calculateExpirationDate(Date.now());
@@ -41,50 +41,75 @@ export const createCard = async (req, res, next) => {
       data: savedCard,
     });
   } catch (err) {
-    next(errorHandler(400, err.message));
+    next(err);
   }
 };
 
 export const getCards = async (req, res, next) => {
   const { accountNumber } = req.body;
   const { page = 1, limit = 10 } = req.query;
-  const query = accountNumber ? { accountNumber } : null;
+  const session = await mongoose.startSession();
   try {
-    const cards = await Card.find(query)
+    session.startTransaction();
+    if (!accountNumber) {
+      throw new CustomError(400, "Account Number is required!");
+    }
+    const user = await User.findOne({ accountNumber }, { balance: 1 }).session(
+      session
+    );
+    if (!user) {
+      throw new CustomError(404, "This Account does not exist!");
+    }
+    const cards = await Card.find({ accountNumber })
       .sort({ createdAt: 1 })
       .limit(limit)
-      .skip((page - 1) * limit);
-    res.status(200).json({ success: true, data: cards });
+      .skip((page - 1) * limit)
+      .session(session);
+    const updatedCards = cards.map((card) => {
+      const newCard = card.toObject();
+      newCard.balance = user.balance;
+      return newCard;
+    });
+    await session.commitTransaction();
+    res.status(200).json({ success: true, data: updatedCards });
   } catch (err) {
-    next(errorHandler(400, err.message));
+    await session.abortTransaction();
+    next(err);
+  } finally {
+    await session.endSession();
   }
 };
 
 export const getCardByCardNumber = async (req, res, next) => {
   const { cardNumber } = req.params;
+  const session = await mongoose.startSession();
   try {
-    if (!cardNumber) {
-      throw new Error("Card Number is required!");
-    }
+    session.startTransaction();
     const card = await Card.findOne({ cardNumber });
     if (!card) {
-      return next(404, errorHandler("Card not found"));
+      throw new CustomError(404, "This Card does not exist!");
     }
-    res.status(200).json({ success: true, data: card });
+
+    const accountNumber = card.accountNumber;
+    const user = await User.findOne({ accountNumber }, { balance: 1 });
+    const updatedCard = card.toObject();
+    updatedCard.balance = user.balance;
+    session.commitTransaction();
+    res.status(200).json({ success: true, data: updatedCard });
   } catch (err) {
-    next(errorHandler(err.message));
+    await session.abortTransaction();
+    next(err);
+  } finally {
+    await session.endSession();
   }
 };
 
 export const deleteCard = async (req, res, next) => {
   const { cardNumber } = req.params;
   try {
-    if (!cardNumber) {
-      throw new Error("Card Number is required!");
-    }
     const card = await Card.findOneAndDelete({ cardNumber });
     if (!card) {
-      return next(404, errorHandler("Card not found!"));
+      throw new CustomError(404, "This Card does not exist!");
     }
     res.status(200).json({
       success: true,
@@ -92,6 +117,6 @@ export const deleteCard = async (req, res, next) => {
       data: card,
     });
   } catch (err) {
-    next(errorHandler(err.message));
+    next(err);
   }
 };
