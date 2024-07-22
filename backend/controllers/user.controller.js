@@ -1,24 +1,66 @@
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/user.model.js";
-import { generateAccountNumber } from "../utils/accountNumber.js";
-import CustomError from "../utils/customError.js";
+import {generateAccountNumber} from "../utils/accountNumber.js";
 
-export const signup = async (req, res, next) => {
-  const { userName, email, password, ...rest } = req.body;
 
-  try {
-    let accountNumber;
-    let isUnique = false;
 
-    // Loop until a unique account number is found
-    while (!isUnique) {
-      accountNumber = generateAccountNumber();
-      const existingUser = await User.findOne({ accountNumber });
-      if (!existingUser) {
-        isUnique = true;
-      }
-    }
+export const signup = async(req, res, next) => {
+
+    const {userName,email, password, ...rest} = req.body;
+
+        let accountNumber;
+        let isUnique = false;
+      
+        // Loop until a unique account number is found
+        while (!isUnique) {
+          accountNumber = generateAccountNumber();
+          const existingUser = await User.findOne({ accountNumber });
+          if (!existingUser) {
+            isUnique = true;
+          }
+        }
+        
+        const ExistingUser = await User.findOne({
+            $or : [
+                {email : email},
+                {userName : userName}
+            ]
+        });
+
+        if (ExistingUser) {
+            if (userName === ExistingUser.userName && email === ExistingUser.email) {
+                return next(errorHandler(400,'You have already an account, please login!'));
+            }else if (userName === ExistingUser.userName) {
+                return next(errorHandler(400, 'username already exists!, choose another one'));
+            }else if (email === ExistingUser.email) {
+                return next(errorHandler(400,'You have already an account, please login!'));
+            }
+        }
+
+        const hashedPassword = bcryptjs.hashSync(password, 10);
+
+        const newUser = new User({
+            userName,
+            email,
+            accountNumber,
+            balance : 0,
+            password : hashedPassword,
+            enabletwoFactorAuthentication : true,
+            recentPasswordChangedTime: new Date(),
+            enableRecomendations : false,
+            enableNotifications : false,
+            enableDigitalCurrency : false,
+            requestedForDelete : false,
+            favourites : "",
+            ...rest
+        });
+
+        try {
+            await newUser.save();
+            res.status(200).json({message : "Successfully Created Account"});
+        }catch(error) {
+            next(error);
+        }
 
     const ExistingUser = await User.findOne({
       $or: [{ email: email }, { userName: userName }],
@@ -123,19 +165,40 @@ export const getUsers = async (req, res, next) => {
 };
 
 export const getUserByAccountNumber = async (req, res, next) => {
-  const { id } = req.params;
-  if (!id) {
-    throw new CustomError(400, "Account Number is required");
-  }
-
-  try {
-    const validUser = await User.findOne({ accountNumber: id }).select(
-      "-password"
-    );
-
-    if (!validUser) {
-      throw new CustomError(404, "User not found");
+    const { accountNumber } = req.params;
+    if (!accountNumber) {
+        return next(errorHandler(400, 'Account Number is required'));
     }
+    
+    try {
+        const validUser = await User.findOne({accountNumber}).select("-password");
+
+        if (!validUser) {
+            return next(errorHandler(404, 'User not found'));
+        }
+        
+        res.status(200).json({
+            success: true,
+            data : validUser
+        })
+    }catch(error) {
+       next(error);
+    }
+};
+
+export const updateUser = async(req, res, next) => {
+    const modifyUser = req.body;
+    const { accountNumber } = req.params;
+    if (!accountNumber) {
+        return next(errorHandler(400, 'Account Number is required'));
+    }
+
+    try {
+        const updatedUser = await User.findOneAndUpdate(
+            { accountNumber },
+            { $set: modifyUser },
+            { new: true, runValidators: true, select: '-password' }
+        );
 
     res.status(200).json({
       success: true,
@@ -173,16 +236,14 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
-export const deleteUser = async (req, res, next) => {
-  const { id } = req.params;
-  if (!id) {
-    throw new CustomError(400, "Account Number is required");
-  }
+export const deleteUser = async(req, res, next) => {
+    const { accountNumber } = req.params;
+    if (!accountNumber) {
+        return next(errorHandler(400, 'Account Number is required'));
+    }
 
-  try {
-    const validUser = await User.findOne({ accountNumber: id }).select(
-      "-password"
-    );
+    try {
+        const validUser = await User.findOne({accountNumber}).select("-password");
 
     if (!validUser) {
       throw new CustomError(404, "User not found");
@@ -191,14 +252,55 @@ export const deleteUser = async (req, res, next) => {
     validUser.requestedForDelete = true;
 
     const updatedUser = await validUser.save();
+        res.status(200).json({
+            success : true,
+            data : {
+                message : "your request to delete account was processed."
+            }
+        });
+    }catch(err) {
+        next(err);
+    }
+};
 
-    res.status(200).json({
-      success: true,
-      data: {
-        message: "your request to delete account was processed.",
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
+export const updatePassword = async (req, res, next) => {
+    const { accountNumber } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!accountNumber) {
+        return next(errorHandler(400, 'Account Number is required'));
+    }
+
+    if (!currentPassword || !newPassword) {
+        return next(errorHandler(400, 'Both current and new passwords are required'));
+    }
+
+    try {
+        const user = await User.findOne({ accountNumber });
+
+        if (!user) {
+            return next(errorHandler(404, 'User not found'));
+        }
+
+        const isPasswordValid = bcryptjs.compareSync(currentPassword, user.password);
+
+        if (!isPasswordValid) {
+            return next(errorHandler(400, 'Current password is incorrect'));
+        }
+
+        const hashedNewPassword = bcryptjs.hashSync(newPassword, 10);
+
+        user.password = hashedNewPassword;
+        user.recentPasswordChangedTime = new Date();
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Password updated successfully'
+        });
+    } catch (error) {
+        console.log("gi")
+        next(error);
+    }
 };
