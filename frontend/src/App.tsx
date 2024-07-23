@@ -7,32 +7,33 @@ import MyPrivileges from "./components/MyPrivileges";
 import Overview from "./components/overview";
 import Services from "./components/Services";
 import Settings from "./components/Settings";
-import Transactions from "./components/Transactions";
 import Signin from "./components/Signin";
+import Transactions from "./components/transactions";
 import DefaultLayout from "./layout/DefaultLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-         <Route path="/auth/signin" element={<Signin />} />
-         <Route path="*" 
-             element={
-                <DefaultLayout>
-                  <Routes>
-                    <Route path="/" element={<Overview />} />
-                    <Route path="/transactions" element={<Transactions />} />
-                    <Route path="/accounts" element={<Accounts />} />
-                    <Route path="/investments" element={<Investments />} />
-                    <Route path="/credit-cards" element={<CreditCards />} />
-                    <Route path="/loans" element={<Loans />} />
-                    <Route path="/services" element={<Services />} />
-                    <Route path="/my-privileges" element={<MyPrivileges />} />
-                    <Route path="/settings" element={<Settings />} />
-                  </Routes>
-                </DefaultLayout>
-             }
-             />
+        <Route path="/auth/signin" element={<Signin />} />
+        <Route
+          path="*"
+          element={
+            <DefaultLayout>
+              <Routes>
+                <Route path="/" element={<Overview />} />
+                <Route path="/transactions" element={<Transactions />} />
+                <Route path="/accounts" element={<Accounts />} />
+                <Route path="/investments" element={<Investments />} />
+                <Route path="/credit-cards" element={<CreditCards />} />
+                <Route path="/loans" element={<Loans />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/my-privileges" element={<MyPrivileges />} />
+                <Route path="/settings" element={<Settings />} />
+              </Routes>
+            </DefaultLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
