@@ -1,12 +1,14 @@
 // src/components/Header.tsx
+import Cookies from "js-cookie";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import hamburger from "../assets/hamburger.svg";
 import notificationBell from "../assets/notificationBell.svg";
 import searchicon from "../assets/searchicon.svg";
 import settings from "../assets/settings.svg";
 import { RootState } from "../store/store";
+import { clearUser } from "../store/userSlice";
 
 const getNavHeading = (path: string) => {
   if (path === "/") {
@@ -28,6 +30,7 @@ const Header: React.FC<{ setSidebarOpen: (open: boolean) => void }> = ({
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const userData = useSelector((state: RootState) => state.user.userData);
   const navHeading = getNavHeading(location.pathname);
+  const dispatch = useDispatch();
 
   const notifications = [
     "Notification 1",
@@ -44,15 +47,28 @@ const Header: React.FC<{ setSidebarOpen: (open: boolean) => void }> = ({
 
   const handleProfileMenuClick = () => {
     setShowProfileMenu(!showProfileMenu);
+    setShowNotifications(false);
   };
 
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
+    setShowProfileMenu(false);
   };
 
   const handleLogout = () => {
     // Implement logout functionality
-    console.log("Logged out");
+    Cookies.remove("access_token");
+    dispatch(clearUser());
+    navigate("/auth/signin");
+  };
+
+  const handleBlur = (
+    setState: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    console.log("blurred");
+    setTimeout(() => {
+      setState(false);
+    }, 100);
   };
 
   return (
@@ -87,17 +103,19 @@ const Header: React.FC<{ setSidebarOpen: (open: boolean) => void }> = ({
             onClick={handleSettingsClick}
           />
         </div>
-        <div className="relative">
+        <div className="relative" onClick={handleNotificationClick}>
           <div className="rounded-full p-2 bg-lightgrey">
             <img
               src={notificationBell}
               alt="notification bell icon"
               className="w-4 h-4 text-gray-600 cursor-pointer hover:text-gray-800"
-              onClick={handleNotificationClick}
             />
           </div>
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg">
+            <div
+              onBlur={() => handleBlur(setShowNotifications)}
+              className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg"
+            >
               <ul className="p-2">
                 {notifications.map((notification, index) => (
                   <li key={index} className="p-2 hover:bg-gray-100">
@@ -114,15 +132,15 @@ const Header: React.FC<{ setSidebarOpen: (open: boolean) => void }> = ({
             </div>
           )}
         </div>
-        <div className="relative">
-          <span
-            className="w-10 h-10 p-2 rounded-full border-2 bg-lightgrey border-gray-300 cursor-pointer hover:border-indigo-500 flex items-center justify-center text-lg font-bold"
-            onClick={handleProfileMenuClick}
-          >
+        <div className="relative" onClick={handleProfileMenuClick}>
+          <span className="w-10 h-10 p-2 rounded-full border-2 bg-lightgrey border-gray-300 cursor-pointer hover:border-indigo-500 flex items-center justify-center text-lg font-bold">
             {userData?.user?.userName[0].toUpperCase()}
           </span>
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg">
+            <div
+              onBlur={handleProfileMenuClick}
+              className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg"
+            >
               <ul className="p-2">
                 <li
                   className="p-2 hover:bg-gray-100 cursor-pointer"

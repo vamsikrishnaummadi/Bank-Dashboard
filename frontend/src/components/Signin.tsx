@@ -34,7 +34,7 @@ const Signin: React.FC = () => {
           });
 
           const data = await response.json();
-          if (response.ok) {
+          if (response.ok && data.user ) {
             dispatch(setUser(data));
             Cookies.set('access_token', data.accessToken);
             navigate('/');

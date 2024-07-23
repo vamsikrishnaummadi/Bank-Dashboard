@@ -18,7 +18,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
   const token = Cookies.get("access_token");
 
   useEffect(() => {
-    if (!userData && !token) {
+    if (!userData.user && !token) {
       navigate("/auth/signin");
     }
   }, [userData, token, navigate]);
