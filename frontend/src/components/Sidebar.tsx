@@ -1,18 +1,18 @@
 // src/components/Sidebar.tsx
-import React from 'react';
 import {
+  BookOpenIcon,
+  BriefcaseIcon,
+  Cog8ToothIcon,
+  CreditCardIcon,
   HomeIcon,
   Square2StackIcon,
   UserIcon,
-  BookOpenIcon,
-  CreditCardIcon,
-  BriefcaseIcon,
-  WrenchScrewdriverIcon,
   UserPlusIcon,
-  Cog8ToothIcon,
+  WrenchScrewdriverIcon,
 } from "@heroicons/react/16/solid";
+import React from "react";
+import { NavLink } from "react-router-dom";
 import logo from "../assets/Logo.svg";
-import { NavLink } from 'react-router-dom';
 
 const sideLinks = [
   {
@@ -69,15 +69,18 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   return (
-    <aside className='md:w-56'>
+    <aside className="md:w-56">
       {/* Sidebar for desktop */}
       <div className="hidden md:flex md:flex-col md:w-56 md:h-screen md:fixed md:top-0 md:left-0 md:bg-white md:border-r md:border-gray-200 md:shadow-lg">
         <div className="flex flex-col items-center justify-start px-5 py-2 h-14 border-b border-gray-200">
-          <button onClick={() => setSidebarOpen(false)} className="mb-2 text-[#1814F3] md:hidden">
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="mb-2 text-[#1814F3] md:hidden"
+          >
             Close
           </button>
           <NavLink to="/">
-              <img src={logo} alt="Logo" className="h-6" />
+            <img src={logo} alt="Logo" className="h-6" />
           </NavLink>
         </div>
         <nav className="flex-1 p-4">
@@ -87,7 +90,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               to={link.href}
               className={({ isActive }) =>
                 `flex items-center p-2 mb-2 text-gray-700 hover:bg-gray-100 rounded-md ${
-                  isActive ? 'bg-blue-100 border-l-4 border-[#1814F3] text-[#1814F3]' : ''
+                  isActive
+                    ? "bg-blue-100 border-l-4 border-[#1814F3] text-[#1814F3]"
+                    : ""
                 }`
               }
             >
@@ -100,12 +105,15 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
       {/* Sidebar for mobile */}
       <div
-        className={`fixed inset-0 z-50 flex md:hidden bg-black bg-opacity-50 transform ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-0 z-50 md:z-0 flex md:hidden bg-black bg-opacity-50 transform ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-200 ease-in-out`}
       >
         <div className="w-56 bg-white shadow-lg p-4">
-          <button onClick={() => setSidebarOpen(false)} className="mb-2 text-[#1814F3]">
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="mb-2 text-[#1814F3]"
+          >
             Close
           </button>
           <div className="flex items-center justify-center px-5 py-2 h-14 border-b border-gray-200">
@@ -118,7 +126,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 to={link.href}
                 className={({ isActive }) =>
                   `flex items-center p-2 mb-2 text-gray-700 hover:bg-gray-100 rounded-md ${
-                    isActive ? 'bg-blue-100 border-l-4 border-[#1814f3] text-[#1814F3]' : ''
+                    isActive
+                      ? "bg-blue-100 border-l-4 border-[#1814f3] text-[#1814F3]"
+                      : ""
                   }`
                 }
                 onClick={() => setSidebarOpen(false)}
