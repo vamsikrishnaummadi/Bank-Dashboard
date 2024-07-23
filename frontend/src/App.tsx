@@ -4,7 +4,7 @@ import CreditCards from "./components/CreditCards";
 import Investments from "./components/Investments";
 import Loans from "./components/Loans";
 import MyPrivileges from "./components/MyPrivileges";
-import Overview from "./components/Overview";
+import Overview from "./components/overview";
 import Services from "./components/Services";
 import Settings from "./components/Settings";
 import Transactions from "./components/Transactions";
