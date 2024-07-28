@@ -44,43 +44,45 @@ const MyCards = (props: MyCardsProps) => {
   }, []);
 
   return (
-    <div className="overflow-x-auto">
-      <div className="mb-2 flex justify-between">
-        <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1">
-          My Cards
-        </h2>
-        {limit &&
-          (path === "/transactions" ? (
-            <button className="text-xs sm:text-sm lg:text-base text-[#343C6A] font-semibold mr-1">
-              + Add Card
-            </button>
-          ) : (
-            <button className="text-xs sm:text-sm lg:text-base text-[#343C6A] font-semibold mr-1">
-              See All
-            </button>
-          ))}
-      </div>
-      <div className="whitespace-nowrap">
-        {cardsList.map((card, index) => {
-          const { balance, expirationDate, cardHolderName } = card;
-          const cardNumber =
-            card.cardNumber.slice(0, 4) +
-            " **** **** " +
-            card.cardNumber.slice(12);
-          const colorTheme = index === 0 ? "primary" : "secondary";
-          return (
-            <CreditCardItem
-              key={index}
-              {...{
-                balance,
-                expirationDate,
-                cardHolderName,
-                cardNumber,
-                colorTheme,
-              }}
-            />
-          );
-        })}
+    <div className="w-11/12 lg:w-2/3 mb-5 lg:mb-4">
+      <div>
+        <div className="mb-2 flex justify-between">
+          <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-0.5">
+            My Cards
+          </h2>
+          {limit &&
+            (path === "/transactions" ? (
+              <button className="text-xs sm:text-sm lg:text-base text-[#343C6A] font-semibold mr-3.5">
+                + Add Card
+              </button>
+            ) : (
+              <button className="text-xs sm:text-sm lg:text-base text-[#343C6A] font-semibold mr-3.5">
+                See All
+              </button>
+            ))}
+        </div>
+        <div className="flex flex-col sm:flex-row items-center sm:items-start max">
+          {cardsList.map((card, index) => {
+            const { balance, expirationDate, cardHolderName } = card;
+            const cardNumber =
+              card.cardNumber.slice(0, 4) +
+              " **** **** " +
+              card.cardNumber.slice(12);
+            const colorTheme = index === 0 ? "primary" : "secondary";
+            return (
+              <CreditCardItem
+                key={index}
+                {...{
+                  balance,
+                  expirationDate,
+                  cardHolderName,
+                  cardNumber,
+                  colorTheme,
+                }}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );

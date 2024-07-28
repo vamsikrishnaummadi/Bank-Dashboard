@@ -1,8 +1,7 @@
 import { Rectangle, RectangleProps } from "recharts";
 
 const CustomBar = (props: RectangleProps) => {
-  const { fill, x, y, width, height } = props;
-  const radius = 9999;
+  const { fill, x, y, width, height, radius } = props;
 
   return (
     <Rectangle

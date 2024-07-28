@@ -1,10 +1,11 @@
-import { Cell, Pie, PieChart } from "recharts";
+import { useEffect, useRef, useState } from "react";
+import { Cell, Pie, PieChart, PieLabelRenderProps } from "recharts";
 
 const data = [
-  { name: "Group A", value: 400 },
-  { name: "Group B", value: 300 },
-  { name: "Group C", value: 300 },
-  { name: "Group D", value: 200 },
+  { name: "Entertainment", value: 300 },
+  { name: "Bill Expense", value: 200 },
+  { name: "Investment", value: 200 },
+  { name: "Others", value: 300 },
 ];
 
 const COLORS = ["#343C6A", "#FC7900", "#1814F3", "#FA00FF"];
@@ -18,7 +19,20 @@ const renderCustomizedLabel = ({
   outerRadius,
   percent,
   index,
-}: any) => {
+}: PieLabelRenderProps) => {
+  if (
+    !(
+      typeof innerRadius === "number" &&
+      typeof outerRadius === "number" &&
+      typeof midAngle === "number" &&
+      typeof cx === "number" &&
+      typeof cy === "number" &&
+      typeof percent === "number" &&
+      typeof index === "number"
+    )
+  ) {
+    return null;
+  }
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
@@ -30,10 +44,12 @@ const renderCustomizedLabel = ({
       fill="white"
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
-      className="text-xs"
+      className="text-sm"
     >
-      <tspan dy={0} dx={0}>{`${(percent * 100).toFixed(0)}%`}</tspan>
-      <tspan dy={15} dx={-25} className="text-[8px]">
+      <tspan dy={0} dx={x > cx ? -20 : 20}>{`${(percent * 100).toFixed(
+        0
+      )}%`}</tspan>
+      <tspan dy={15} dx={-35} className="text-xs">
         {data[index].name}
       </tspan>
     </text>
@@ -41,30 +57,51 @@ const renderCustomizedLabel = ({
 };
 
 const ExpenseStatistics = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        setSize(containerRef.current.offsetWidth);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2">
-      <h2>Expenses Statistics</h2>
-      <PieChart
-        width={300}
-        height={250}
-        className="bg-white mt-1 border rounded-2xl lg:rounded-3xl"
-      >
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          labelLine={false}
-          label={renderCustomizedLabel}
-          outerRadius={80}
-          fill="#8884d8"
-          dataKey="value"
-          nameKey="name"
+    <div className="w-4/5 sm:w-1/2 lg:w-1/3" ref={containerRef}>
+      <div className="lg:ml-3 mb-3">
+        <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2">
+          Expenses Statistics
+        </h2>
+        <PieChart
+          width={size}
+          height={size}
+          className="bg-white mt-1 border rounded-2xl lg:rounded-3xl"
         >
-          {data.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-      </PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            label={renderCustomizedLabel}
+            outerRadius={size / 3}
+            fill="#8884d8"
+            dataKey="value"
+            nameKey="name"
+          >
+            {data.map((_, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+        </PieChart>
+      </div>
     </div>
   );
 };
