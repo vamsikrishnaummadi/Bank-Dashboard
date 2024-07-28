@@ -1,8 +1,8 @@
-import ServiceItem from '../components/Bankservice';
+
 
 
 const Services = () => {
-  return <div><ServiceItem/></div>;
+  return <div></div>;
 };
 
 export default Services;

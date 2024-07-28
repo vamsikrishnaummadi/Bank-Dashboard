@@ -465,7 +465,7 @@ Request Body:
 
 ```javascript
 {
-	"accountNumber": 568134727900		// optional
+	"accountNumber": 568134727900
 }
 ```
 

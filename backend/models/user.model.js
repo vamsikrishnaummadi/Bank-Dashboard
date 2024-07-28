@@ -92,8 +92,7 @@ const userSchema = new mongoose.Schema({
          type: String,
        },
        requestedForDelete : {
-         type: Boolean,
-         required: true
+         type: Boolean
        }
        
 },{
