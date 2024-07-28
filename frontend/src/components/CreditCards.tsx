@@ -1,5 +1,6 @@
 const CreditCards = () => {
-  return <div></div>;
+  return (
+   <div>Credit Cards</div>  );
 };
 
 export default CreditCards;

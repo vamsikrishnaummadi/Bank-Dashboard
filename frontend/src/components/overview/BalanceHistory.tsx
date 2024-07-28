@@ -64,8 +64,6 @@ const BalanceHistory = () => {
           width={500}
           height={200}
           data={finalData}
-
-          // eslint-disable-next-line react/jsx-no-bind
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis

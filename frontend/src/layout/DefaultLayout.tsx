@@ -30,7 +30,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
             </div>
             <div className='w-full flex flex-col flex-1'>
                 <Header  setSidebarOpen={setSidebarOpen} />
-                <main className='overflow-y-auto w-full bg-[#E5E5E5]'>
+                <main className='overflow-y-auto w-full bg-[#F5F7FA]'>
                     <div className='mx-auto p-4 md:p-6 2xl:p-10 mt-2'>
                         {children}
                     </div>
