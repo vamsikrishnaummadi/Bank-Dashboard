@@ -1,95 +1,94 @@
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { useEffect, useRef, useState } from "react";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-const data: any[] = [];
-const startDate = new Date(2024, 0, 1); // Start date (January 1, 2024)
-
-for (let i = 0; i < 180; i++) {
-  const newDate = new Date(startDate.getTime() + i * (1000 * 60 * 60 * 24)); // Increment by 1 day
-  data.push({
-    date: newDate,
-    value: Math.random() * 100, // Random value between 0 and 100
-  });
-}
-
-const formattedData = data.reduce((accumulator, currentValue) => {
-  const { date, value } = currentValue;
-  const currentMonth = date.getMonth();
-  const currentYear = date.getFullYear();
-  const currentDateNumber = date.getTime();
-  const startDate = new Date(currentYear, currentMonth, 1).getTime();
-  const endDate = new Date(currentYear, currentMonth + 1, 1).getTime();
-  const formattedDateTime =
-    Math.floor(((currentDateNumber - startDate) * 2) / (endDate - startDate)) *
-      100 +
-    currentMonth * 200;
-  const currentKey = formattedDateTime.toString();
-
-  if (accumulator[currentKey]) {
-    const currentEntry = accumulator[currentKey];
-    accumulator[currentKey] = {
-      value: (currentEntry.value + value) / currentEntry.count,
-      count: currentEntry.count,
-    };
-    return accumulator;
-  } else {
-    accumulator[currentKey] = { value, count: 1 };
-    return accumulator;
-  }
-}, {});
-
-const finalData = Object.entries(formattedData).map((item: any) => ({
-  date: item[0],
-  value: item[1].value,
-}));
+const data = [
+  { date: "2024-01-01", balance: 593.93 },
+  { date: "2024-01-17", balance: 743.67 },
+  { date: "2024-02-02", balance: 642.49 },
+  { date: "2024-02-19", balance: 590.39 },
+  { date: "2024-03-06", balance: 481.29 },
+  { date: "2024-03-23", balance: 681.3 },
+  { date: "2024-04-08", balance: 493.83 },
+  { date: "2024-04-25", balance: 902.6 },
+  { date: "2024-05-11", balance: 967.3 },
+  { date: "2024-05-28", balance: 445.1 },
+  { date: "2024-06-13", balance: 812.55 },
+  { date: "2024-06-30", balance: 576.01 },
+];
 
 const BalanceHistory = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState(0);
+
+  const CustomXAxisTick = ({ x, y, payload }: any) => {
+    const date = new Date(payload.value);
+    const month = date.toLocaleString("default", { month: "short" });
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={0} dy={16} textAnchor="middle" fill="#666">
+          {month}
+        </text>
+      </g>
+    );
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        setSize(containerRef.current.offsetWidth);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   return (
-    <div style={{ userSelect: "none", width: "100%" }}>
-      <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1">
+    <div
+      className="w-full sm:w-11/12 lg:w-2/3  mb-5 lg:mb-4"
+      ref={containerRef}
+    >
+      <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2">
         Balance History
       </h2>
-      <ResponsiveContainer
-        width="60%"
-        height={250}
-        className="bg-white mt-1 border rounded-2xl lg:rounded-3xl p-2"
+      <AreaChart
+        width={size}
+        height={size > 500 ? size / 2 : size * (3 / 5)}
+        data={data}
+        className="bg-white mt-3 rounded-xl mr-3 p-2"
       >
-        <LineChart
-          width={500}
-          height={200}
-          data={finalData}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="date"
-            type="number"
-            tickCount={6}
-            axisLine={false}
-            tickSize={3}
-            tickMargin={10}
-          />
-          <YAxis
-            dataKey="value"
-            type="number"
-            axisLine={false}
-            tickSize={3}
-            tickMargin={10}
-          />
-          <Line
-            type="monotone"
-            dataKey="value"
-            stroke="#8884d8"
-            dot={false}
-            strokeWidth={2}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+        <defs>
+          <linearGradient x1="0" y1="0" x2="0" y2="1" id="colorGradient">
+            <stop offset="5%" stopColor="#2D60FF40" stopOpacity={0.8} />
+            <stop offset="95%" stopColor="#2D60FF00" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" color="#DFE5EE" />
+        <XAxis
+          dataKey="date"
+          tickCount={6}
+          tick={<CustomXAxisTick />}
+          axisLine={false}
+          tickSize={3}
+          tickMargin={10}
+        />
+        <YAxis
+          dataKey="balance"
+          type="number"
+          axisLine={false}
+          tickSize={3}
+          tickMargin={10}
+          domain={([_, dataMax]) => [0, Math.round(dataMax * 1.15)]}
+        />
+        <Area
+          type="monotone"
+          dataKey="balance"
+          stroke="#8884d8"
+          dot={false}
+          strokeWidth={2}
+          fillOpacity={1}
+          fill="url(#colorGradient)"
+        />
+      </AreaChart>
     </div>
   );
 };

@@ -45,50 +45,55 @@ const RecentTransactions = () => {
   }, []);
 
   return (
-    <div className="xl:mr-5 ml-5 ml-0 mt-5 sm:mt-0 md:mt-3 lg:mt-0">
-      <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2">
-        Recent Transactions
-      </h2>
-      <ul className="w-52 lg:w-60 bg-white mt-1 border rounded-2xl lg:rounded-3xl">
-        {recentTransactions.map((transaction, index) => {
-          const amountInUSD = transaction.amount.toLocaleString("en-US", {
-            style: "decimal",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-            currency: "USD",
-          });
-          return (
-            <li className="flex flex-row m-3 justify-between" key={index}>
-              <div className={`w-7 lg:w-8 bg-[${transaction.icon_bg}]`}>
-                <img
-                  src={transaction.icon}
-                  alt="transaction icon"
-                  className="w-4 lg:w-5"
-                />
-              </div>
-              <div>
-                <p className="text-xs lg:text-sm font-medium">
-                  {transaction.description}
-                </p>
-                <p className="text-[10px] lg:text-xs font-normal">
-                  {transaction.transactionDate}
-                </p>
-              </div>
-              <div>
-                <p
-                  className={`text-xs lg:text-base font-medium ${
-                    transaction.type === "income"
-                      ? "text-[#41D4A8]"
-                      : "text-[#FF4B4A]"
-                  }`}
-                >
-                  {transaction.type === "income" ? "+" : "-"}${amountInUSD}
-                </p>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+    <div className="w-4/5 sm:w-1/2 lg:w-1/3">
+      <div className="lg:ml-3 mb-5 lg:mb-4">
+        <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2">
+          Recent Transactions
+        </h2>
+        <ul
+          className="bg-white border rounded-2xl lg:rounded-3xl flex flex-col justify-between py-4"
+          style={{ aspectRatio: 1.5 }}
+        >
+          {recentTransactions.map((transaction, index) => {
+            const amountInUSD = transaction.amount.toLocaleString("en-US", {
+              style: "decimal",
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+              currency: "USD",
+            });
+            return (
+              <li className="flex flex-row mx-3 justify-between" key={index}>
+                <div className={`w-7 lg:w-8 bg-[${transaction.icon_bg}]`}>
+                  <img
+                    src={transaction.icon}
+                    alt="transaction icon"
+                    className="w-4 lg:w-5"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm lg:text-md font-medium">
+                    {transaction.description}
+                  </p>
+                  <p className="text-xs lg:text-sm font-normal">
+                    {transaction.transactionDate}
+                  </p>
+                </div>
+                <div>
+                  <p
+                    className={`text-sm lg:text-lg font-medium ${
+                      transaction.type === "income"
+                        ? "text-[#41D4A8]"
+                        : "text-[#FF4B4A]"
+                    }`}
+                  >
+                    {transaction.type === "income" ? "+" : "-"}${amountInUSD}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 };

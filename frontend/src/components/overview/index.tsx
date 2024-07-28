@@ -7,11 +7,11 @@ import WeeklyActivity from "./WeeklyActivity";
 const Overview = () => {
   return (
     <div className="overflow-y-auto">
-      <div className="flex flex-wrap justify-between">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between">
         <MyCards limit={2} />
         <RecentTransactions />
       </div>
-      <div className="flex flex-wrap justify-between mt-3">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between mt-3">
         <WeeklyActivity />
         <ExpenseStatistics />
       </div>
