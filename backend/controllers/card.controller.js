@@ -7,7 +7,12 @@ import CustomError from "../utils/customError.js";
 import { calculateExpirationDate } from "../utils/expirationDate.js";
 
 export const createCard = async (req, res, next) => {
-  const { accountNumber, cardHolderName } = req.body;
+  const {
+    accountNumber,
+    cardHolderName,
+    cardNumber = await generateCardNumber(),
+    expirationDate = calculateExpirationDate(Date.now()),
+  } = req.body;
   try {
     if (!accountNumber) {
       throw new CustomError(400, "Account number is required!");
@@ -19,12 +24,9 @@ export const createCard = async (req, res, next) => {
     if (!user) {
       throw new CustomError(404, "This Account does not exist!");
     }
-    const cardNumber = await generateCardNumber();
-    const expirationDate = calculateExpirationDate(Date.now());
     const cvv = Math.floor(100 + Math.random() * 900).toString();
     const pin = Math.floor(1000 + Math.random() * 9000).toString();
     const hashedPin = bcrypt.hashSync(pin, 10);
-    console.log({ hashedPin });
 
     const card = new Card({
       ...req.body,
@@ -101,6 +103,27 @@ export const getCardByCardNumber = async (req, res, next) => {
     next(err);
   } finally {
     await session.endSession();
+  }
+};
+
+export const updateCard = async (req, res, next) => {
+  const { cardNumber } = req.params;
+  try {
+    const card = await Card.findOneAndUpdate(
+      { cardNumber },
+      { $set: req.body },
+      { new: true }
+    );
+    if (!card) {
+      throw new CustomError(404, "This Card does not exist!");
+    }
+    res.status(200).json({
+      success: true,
+      message: "Card updated successfully.",
+      data: card,
+    });
+  } catch (err) {
+    next(err);
   }
 };
 

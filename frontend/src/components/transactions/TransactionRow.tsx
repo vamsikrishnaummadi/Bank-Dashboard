@@ -48,7 +48,11 @@ const TransactionRow = (props: any) => {
         >
           {type === "credit" ? "+" : "-"}${amount}
         </td>
-        <td className={`font-medium ${commonClasses}`}>{reciept}</td>
+        <td className={`font-medium ${commonClasses}`}>
+          <button className="text-blue-500 border border-blue-500 p-2 rounded-3xl">
+            view details
+          </button>
+        </td>
       </tr>
     </>
   );

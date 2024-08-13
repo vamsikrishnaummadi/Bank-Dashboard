@@ -14,6 +14,11 @@ const getNavHeading = (path: string) => {
   if (path === "/") {
     return "Overview";
   }
+  const leftIndex = path.indexOf("/");
+  const rightIndex = path.lastIndexOf("/");
+  if (leftIndex !== rightIndex) {
+    path = path.slice(leftIndex, rightIndex);
+  }
   return path
     .slice(1)
     .split("-")

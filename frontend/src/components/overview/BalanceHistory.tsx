@@ -1,5 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 const data = [
   { date: "2024-01-01", balance: 593.93 },
@@ -17,9 +23,6 @@ const data = [
 ];
 
 const BalanceHistory = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState(0);
-
   const CustomXAxisTick = ({ x, y, payload }: any) => {
     const date = new Date(payload.value);
     const month = date.toLocaleString("default", { month: "short" });
@@ -32,63 +35,52 @@ const BalanceHistory = () => {
     );
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (containerRef.current) {
-        setSize(containerRef.current.offsetWidth);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
   return (
-    <div
-      className="w-full sm:w-11/12 lg:w-2/3  mb-5 lg:mb-4"
-      ref={containerRef}
-    >
+    <div className="w-full sm:w-11/12 lg:w-2/3  mb-5 lg:mb-4">
       <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2">
         Balance History
       </h2>
-      <AreaChart
-        width={size}
-        height={size > 500 ? size / 2 : size * (3 / 5)}
-        data={data}
-        className="bg-white mt-3 rounded-xl mr-3 p-2"
-      >
-        <defs>
-          <linearGradient x1="0" y1="0" x2="0" y2="1" id="colorGradient">
-            <stop offset="5%" stopColor="#2D60FF40" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="#2D60FF00" stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <CartesianGrid strokeDasharray="3 3" color="#DFE5EE" />
-        <XAxis
-          dataKey="date"
-          tickCount={6}
-          tick={<CustomXAxisTick />}
-          axisLine={false}
-          tickSize={3}
-          tickMargin={10}
-        />
-        <YAxis
-          dataKey="balance"
-          type="number"
-          axisLine={false}
-          tickSize={3}
-          tickMargin={10}
-          domain={([_, dataMax]) => [0, Math.round(dataMax * 1.15)]}
-        />
-        <Area
-          type="monotone"
-          dataKey="balance"
-          stroke="#8884d8"
-          dot={false}
-          strokeWidth={2}
-          fillOpacity={1}
-          fill="url(#colorGradient)"
-        />
-      </AreaChart>
+      <ResponsiveContainer width="100%" height={250}>
+        <AreaChart
+          width={450}
+          height={250}
+          data={data}
+          className="bg-white mt-3 rounded-xl mr-3 p-2"
+        >
+          <defs>
+            <linearGradient x1="0" y1="0" x2="0" y2="1" id="colorGradient">
+              <stop offset="5%" stopColor="#2D60FF40" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#2D60FF00" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" color="#DFE5EE" />
+          <XAxis
+            dataKey="date"
+            tickCount={6}
+            tick={<CustomXAxisTick />}
+            axisLine={false}
+            tickSize={3}
+            tickMargin={10}
+          />
+          <YAxis
+            dataKey="balance"
+            type="number"
+            axisLine={false}
+            tickSize={3}
+            tickMargin={10}
+            domain={([_, dataMax]) => [0, Math.round(dataMax * 1.15)]}
+          />
+          <Area
+            type="monotone"
+            dataKey="balance"
+            stroke="#8884d8"
+            dot={false}
+            strokeWidth={2}
+            fillOpacity={1}
+            fill="url(#colorGradient)"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 };

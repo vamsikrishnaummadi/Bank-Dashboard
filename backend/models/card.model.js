@@ -8,6 +8,16 @@ const cardSchema = new mongoose.Schema(
       unique: true,
       match: /^\d{16}$/,
     },
+    cardStatus: {
+      type: String,
+      required: true,
+      enum: ["active", "blocked"],
+    },
+    cardType: {
+      type: String,
+      required: true,
+      enum: ["debit", "credit"],
+    },
     expirationDate: {
       type: String,
       required: true,
@@ -31,6 +41,22 @@ const cardSchema = new mongoose.Schema(
       required: true,
     },
     pin: {
+      type: String,
+      required: true,
+    },
+    cardLimit: {
+      type: Number,
+      required: true,
+    },
+    transactiionLimit: {
+      type: Number,
+      required: true,
+    },
+    quickTransferLimit: {
+      type: Number,
+    },
+    amountDue: { type: Number },
+    rewardPoints: {
       type: String,
       required: true,
     },

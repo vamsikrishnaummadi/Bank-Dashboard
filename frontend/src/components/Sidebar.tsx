@@ -36,8 +36,8 @@ const sideLinks = [
     icon: BookOpenIcon,
   },
   {
-    href: "/credit-cards",
-    label: "Credit Cards",
+    href: "/payment-cards",
+    label: "Payment Cards",
     icon: CreditCardIcon,
   },
   {
