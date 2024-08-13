@@ -17,7 +17,7 @@ export const getNotificationsByAccountNumber = async (req, res, next) => {
 
   try {
     const notifications = await Notification.find({ accountNumber })
-      .skip((page - 1) * limit)
+      .skip((parseInt(page) - 1) * parseInt(limit))
       .limit(parseInt(limit))
       .sort({ createdAt: -1 });
 

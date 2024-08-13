@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import CreditCardItem from "./CreditCardItem";
+import SingleCard from "./SingleCard";
 
 interface MyCardsProps {
   limit: number | null;
@@ -14,7 +14,7 @@ interface Card {
   cardNumber: string;
 }
 
-const MyCards = (props: MyCardsProps) => {
+const MultipleCards = (props: MyCardsProps) => {
   const location = useLocation();
   const path = location.pathname;
   const { limit , customWidth} = props;
@@ -39,10 +39,10 @@ const MyCards = (props: MyCardsProps) => {
       .catch((err) => {
         console.log({ err });
       });
-  }, []);
+  }, [limit]);
 
   return (
-    <div className={`w-11/12 lg:w-2/3 mb-5 lg:mb-4 ${customWidth}`}>
+    <div className={customWidth ? customWidth : "w-11/12 lg:w-2/3 mb-5 lg:mb-4"}>
       <div>
         <div className="mb-2 flex justify-between">
           <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-0.5">
@@ -59,7 +59,7 @@ const MyCards = (props: MyCardsProps) => {
               </button>
             ))}
         </div>
-        <div className="flex flex-col sm:flex-row items-center sm:items-start max">
+        <div className="flex items-center overflow-x-scroll scrollbar-none">
           {cardsList.map((card, index) => {
             const { balance, expirationDate, cardHolderName } = card;
             const cardNumber =
@@ -68,7 +68,7 @@ const MyCards = (props: MyCardsProps) => {
               card.cardNumber.slice(12);
             const colorTheme = index === 0 ? "primary" : "secondary";
             return (
-              <CreditCardItem
+              <SingleCard
                 key={index}
                 {...{
                   balance,
@@ -86,4 +86,4 @@ const MyCards = (props: MyCardsProps) => {
   );
 };
 
-export default MyCards;
+export default MultipleCards;
