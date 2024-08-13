@@ -1,29 +1,29 @@
-import { useEffect } from "react";
 import Cookies from "js-cookie";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Accounts from "./components/Accounts/index";
-import CreditCards from "./components/CreditCards";
+import CardDetails from "./components/CardDetails";
 import Investments from "./components/Investments";
 import Loans from "./components/Loans/index";
 import MyPrivileges from "./components/MyPrivileges";
+import Notifications from "./components/Notifications/index";
 import Overview from "./components/overview";
+import PaymentCards from "./components/payment-cards";
 import Services from "./components/Services/index";
 import Settings from "./components/Settings/index";
 import Signin from "./components/Signin";
 import Transactions from "./components/transactions";
 import DefaultLayout from "./layout/DefaultLayout";
-import Notifications from "./components/Notifications/index";
 
 function App() {
-
   useEffect(() => {
     const handleUnload = () => {
-      Cookies.remove('access_token');
+      Cookies.remove("access_token");
     };
-  
-    window.addEventListener('beforeunload', handleUnload);
+
+    window.addEventListener("beforeunload", handleUnload);
     return () => {
-      window.removeEventListener('beforeunload', handleUnload);
+      window.removeEventListener("beforeunload", handleUnload);
     };
   }, []);
 
@@ -40,7 +40,11 @@ function App() {
                 <Route path="/transactions" element={<Transactions />} />
                 <Route path="/accounts" element={<Accounts />} />
                 <Route path="/investments" element={<Investments />} />
-                <Route path="/credit-cards" element={<CreditCards />} />
+                <Route path="/payment-cards" element={<PaymentCards />} />
+                <Route
+                  path="/card-details/:cardNumber"
+                  element={<CardDetails />}
+                />
                 <Route path="/loans" element={<Loans />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/my-privileges" element={<MyPrivileges />} />

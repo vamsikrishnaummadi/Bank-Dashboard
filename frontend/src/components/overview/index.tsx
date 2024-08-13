@@ -11,11 +11,11 @@ const Overview = () => {
         <MyCards limit={2} />
         <RecentTransactions />
       </div>
-      <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between mt-3">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between mt-4">
         <WeeklyActivity />
         <ExpenseStatistics />
       </div>
-      <div className="mt-2">
+      <div className="mt-4">
         <BalanceHistory />
       </div>
     </div>

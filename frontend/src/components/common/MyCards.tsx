@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import CreditCardItem from "./CreditCardItem";
+import { RootState } from "../../store/store";
+import { getCards } from "../../utils/apiService";
+import CardItem from "./CardItem";
 
 interface MyCardsProps {
   limit: number | null;
-  customWidth : string | null;
 }
 
 interface Card {
@@ -12,37 +14,35 @@ interface Card {
   expirationDate: string;
   cardHolderName: string;
   cardNumber: string;
+  cardType: "debit" | "credit";
 }
 
 const MyCards = (props: MyCardsProps) => {
+  const userData = useSelector((state: RootState) => state?.user?.userData);
+
   const location = useLocation();
   const path = location.pathname;
-  const { limit , customWidth} = props;
+  const { limit } = props;
+  console.log({ limit });
 
   const [cardsList, setCardsList] = useState<Card[]>([]);
 
   useEffect(() => {
-    fetch(`/api/cards?page=1${limit && "&limit=" + limit}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ accountNumber: 568134727900 }),
-    })
-      .then((res) =>
-        res.json().then((parsedRes) => {
-          if (parsedRes.success) {
-            setCardsList(parsedRes.data);
-          }
-        })
-      )
-      .catch((err) => {
-        console.log({ err });
+    if (userData?.accountNumber) {
+      getCards(userData.accountNumber, limit).then((res) => {
+        if (res.success) {
+          setCardsList(res.data);
+        }
       });
-  }, []);
+    }
+  }, [userData?.accountNumber]);
 
   return (
-    <div className={`w-11/12 lg:w-2/3 mb-5 lg:mb-4 ${customWidth}`}>
+    <div
+      className={`${
+        path === "/payment-cards" ? "w-11/12" : "w-11/12 lg:w-2/3"
+      } mb-5 lg:mb-4`}
+    >
       <div>
         <div className="mb-2 flex justify-between">
           <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-0.5">
@@ -59,23 +59,24 @@ const MyCards = (props: MyCardsProps) => {
               </button>
             ))}
         </div>
-        <div className="flex flex-col sm:flex-row items-center sm:items-start max">
+        <div className="items-center sm:items-start flex grow overflow-x-auto">
           {cardsList.map((card, index) => {
-            const { balance, expirationDate, cardHolderName } = card;
-            const cardNumber =
-              card.cardNumber.slice(0, 4) +
-              " **** **** " +
-              card.cardNumber.slice(12);
-            const colorTheme = index === 0 ? "primary" : "secondary";
+            const {
+              balance,
+              expirationDate,
+              cardHolderName,
+              cardType,
+              cardNumber,
+            } = card;
             return (
-              <CreditCardItem
+              <CardItem
                 key={index}
                 {...{
                   balance,
                   expirationDate,
                   cardHolderName,
                   cardNumber,
-                  colorTheme,
+                  cardType,
                 }}
               />
             );

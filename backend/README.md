@@ -429,7 +429,7 @@ Request Body:
 ```javascript
 {
 	"accountNumber": 568134727900,
-	"cardHolderName": "John Doe 3"
+	"cardHolderName": "John Doe 3",
 }
 ```
 

@@ -192,7 +192,7 @@ const AllTransactions = () => {
 
   return (
     <div>
-      <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2 mt-3">
+      <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2 mt-4">
         All Transactions
       </h2>
       <div className="w-full flex-col">

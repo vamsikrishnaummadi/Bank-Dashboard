@@ -1,5 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import { Cell, Pie, PieChart, PieLabelRenderProps } from "recharts";
+import {
+  Cell,
+  Pie,
+  PieChart,
+  PieLabelRenderProps,
+  ResponsiveContainer,
+} from "recharts";
 
 const data = [
   { name: "Entertainment", value: 300 },
@@ -57,50 +62,41 @@ const renderCustomizedLabel = ({
 };
 
 const ExpenseStatistics = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState(0);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (containerRef.current) {
-        setSize(containerRef.current.offsetWidth);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
-    <div className="w-4/5 sm:w-1/2 lg:w-1/3" ref={containerRef}>
+    <div className="w-full lg:w-1/3">
       <div className="lg:ml-3 mb-3">
         <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2">
           Expenses Statistics
         </h2>
-        <PieChart
-          width={size}
-          height={size}
-          className="bg-white mt-1 border rounded-2xl lg:rounded-3xl"
-        >
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            label={renderCustomizedLabel}
-            outerRadius={size / 3}
-            fill="#8884d8"
-            dataKey="value"
-            nameKey="name"
-          >
-            {data.map((_, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-        </PieChart>
+        <div className="w-4/5 sm:w-1/2 lg:w-full sm:m-auto">
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart
+              width={450}
+              height={250}
+              className="bg-white mt-1 border rounded-2xl lg:rounded-3xl"
+            >
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={renderCustomizedLabel}
+                outerRadius={100}
+                paddingAngle={5}
+                fill="#8884d8"
+                dataKey="value"
+                nameKey="name"
+              >
+                {data.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );

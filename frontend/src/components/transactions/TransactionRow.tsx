@@ -7,15 +7,8 @@ const commonClasses =
   "text-sm xl:text-base whitespace-nowrap px-2 py-4 border-t border-solid border-[#E6EFF5]";
 
 const TransactionRow = (props: any) => {
-  const {
-    description,
-    transactionId,
-    type,
-    cardNumber,
-    createdAt,
-    amount,
-    reciept = "no reciept",
-  } = props.transaction;
+  const { description, transactionId, type, cardNumber, createdAt, amount } =
+    props.transaction;
   return (
     <>
       <tr className="">
@@ -48,7 +41,11 @@ const TransactionRow = (props: any) => {
         >
           {type === "credit" ? "+" : "-"}${amount}
         </td>
-        <td className={`font-medium ${commonClasses}`}>{reciept}</td>
+        <td className={`font-medium ${commonClasses}`}>
+          <button className="text-blue-500 border border-blue-500 p-2 rounded-3xl">
+            view details
+          </button>
+        </td>
       </tr>
     </>
   );
