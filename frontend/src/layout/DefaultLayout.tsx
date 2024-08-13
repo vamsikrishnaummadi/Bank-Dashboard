@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
+import Header from "../components/Header/index";
 import Sidebar from "../components/Sidebar";
 import { RootState } from "../store/store";
 
@@ -18,7 +18,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
   const token = Cookies.get("access_token");
 
   useEffect(() => {
-    if (!userData.user && !token) {
+    if (!userData?.user && !token) {
       navigate("/auth/signin");
     }
   }, [userData, token, navigate]);

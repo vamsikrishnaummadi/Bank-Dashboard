@@ -30,8 +30,8 @@ app.use(
 );
 
 // Running Port of API
-app.listen(5000, () => {
-  console.log("API Running at http://localhost:5000");
+app.listen(5100, () => {
+  console.log("API Running at http://localhost:5100");
 });
 
 // mongodb database connection

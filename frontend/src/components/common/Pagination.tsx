@@ -39,8 +39,6 @@ function Pagination({
       pageNumbers.push("...");
       pageNumbers.push(pageCount);
     }
-
-    console.log({ pageNumbers });
     return pageNumbers;
   };
 
