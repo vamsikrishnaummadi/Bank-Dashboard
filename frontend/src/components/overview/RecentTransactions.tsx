@@ -3,7 +3,7 @@ import {
   creditCardYellowCircle,
   dollarIcon,
   paypalIcon,
-} from "../../utils/assetsGroup";
+} from "./overviewIcons";
 
 const RecentTransactions = () => {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);

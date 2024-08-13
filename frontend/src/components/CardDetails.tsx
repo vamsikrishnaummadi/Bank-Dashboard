@@ -51,7 +51,6 @@ const CardDetails = () => {
     cardStatus,
     expirationDate,
     cvv,
-    pin,
     transactionLimit,
     amountDue,
     rewardPoints,

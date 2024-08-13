@@ -18,8 +18,7 @@ interface Card {
 }
 
 const MyCards = (props: MyCardsProps) => {
-  const user = useSelector((state: RootState) => state.user.userData.user);
-  const { accountNumber } = user;
+  const userData = useSelector((state: RootState) => state?.user?.userData);
 
   const location = useLocation();
   const path = location.pathname;
@@ -29,12 +28,14 @@ const MyCards = (props: MyCardsProps) => {
   const [cardsList, setCardsList] = useState<Card[]>([]);
 
   useEffect(() => {
-    getCards(accountNumber, limit).then((res) => {
-      if (res.success) {
-        setCardsList(res.data);
-      }
-    });
-  }, []);
+    if (userData?.accountNumber) {
+      getCards(userData.accountNumber, limit).then((res) => {
+        if (res.success) {
+          setCardsList(res.data);
+        }
+      });
+    }
+  }, [userData?.accountNumber]);
 
   return (
     <div

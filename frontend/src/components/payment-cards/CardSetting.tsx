@@ -1,9 +1,4 @@
-import {
-  apple,
-  creditCardYellow,
-  google,
-  lockPin,
-} from "../../utils/assetsGroup";
+import { apple, creditCardYellow, google, lockPin } from "./cardIcons";
 
 const settingsData = [
   {

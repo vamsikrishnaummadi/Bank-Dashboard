@@ -1,4 +1,4 @@
-import { creditCardYellow } from "../../utils/assetsGroup";
+import { creditCardYellow } from "./cardIcons";
 
 const cardsData = [
   {
