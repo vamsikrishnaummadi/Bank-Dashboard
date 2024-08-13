@@ -1,9 +1,8 @@
 // src/components/SignIn.tsx
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import {useNavigate} from "react-router-dom";
 import { setUser } from '../store/userSlice';
-import { RootState } from '../store/store';
 import Cookies from 'js-cookie';
 
 const Signin: React.FC = () => {
@@ -12,15 +11,14 @@ const Signin: React.FC = () => {
   const [error, setError] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userData = useSelector((state: RootState) => state.user.userData);
   const token = Cookies.get('access_token');
 
 
   useEffect(() => {
-    if (userData && token) {
+    if (token) {
       navigate('/');
     }
-  }, [userData, navigate, token]);
+  }, [navigate, token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -34,9 +32,9 @@ const Signin: React.FC = () => {
           });
 
           const data = await response.json();
-          if (response.ok && data.user ) {
-            dispatch(setUser(data));
-            Cookies.set('access_token', data.accessToken);
+          if (response.ok && data?.user ) {
+            dispatch(setUser(data?.user));
+            Cookies.set('access_token', data?.accessToken);
             navigate('/');
           }else {
             setError(data.message);

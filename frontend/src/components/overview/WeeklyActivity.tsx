@@ -43,7 +43,6 @@ const data = [
 const WeeklyActivity = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(0);
-  console.log({ size });
 
   useEffect(() => {
     const handleResize = () => {

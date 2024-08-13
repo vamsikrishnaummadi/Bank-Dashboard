@@ -235,7 +235,6 @@ export const updatePassword = async (req, res, next) => {
             message: 'Password updated successfully'
         });
     } catch (error) {
-        console.log("gi")
         next(error);
     }
 };

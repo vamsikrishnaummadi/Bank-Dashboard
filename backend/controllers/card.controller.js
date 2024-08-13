@@ -24,7 +24,6 @@ export const createCard = async (req, res, next) => {
     const cvv = Math.floor(100 + Math.random() * 900).toString();
     const pin = Math.floor(1000 + Math.random() * 9000).toString();
     const hashedPin = bcrypt.hashSync(pin, 10);
-    console.log({ hashedPin });
 
     const card = new Card({
       ...req.body,

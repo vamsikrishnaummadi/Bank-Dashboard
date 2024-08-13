@@ -1,17 +1,32 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Accounts from "./components/Accounts";
+import { useEffect } from "react";
+import Cookies from "js-cookie";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import Accounts from "./components/Accounts/index";
 import CreditCards from "./components/CreditCards";
 import Investments from "./components/Investments";
-import Loans from "./components/Loans";
+import Loans from "./components/Loans/index";
 import MyPrivileges from "./components/MyPrivileges";
 import Overview from "./components/overview";
-import Services from "./components/Services";
-import Settings from "./components/Settings";
+import Services from "./components/Services/index";
+import Settings from "./components/Settings/index";
 import Signin from "./components/Signin";
 import Transactions from "./components/transactions";
 import DefaultLayout from "./layout/DefaultLayout";
+import Notifications from "./components/Notifications/index";
 
 function App() {
+
+  useEffect(() => {
+    const handleUnload = () => {
+      Cookies.remove('access_token');
+    };
+  
+    window.addEventListener('beforeunload', handleUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -29,7 +44,9 @@ function App() {
                 <Route path="/loans" element={<Loans />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/my-privileges" element={<MyPrivileges />} />
-                <Route path="/settings" element={<Settings />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/settings/:tab" element={<Settings />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </DefaultLayout>
           }
