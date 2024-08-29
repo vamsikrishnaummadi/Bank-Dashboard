@@ -4,39 +4,71 @@ import User from "../models/user.model.js";
 import CustomError from "../utils/customError.js";
 
 export const createTransaction = async (req, res, next) => {
+  const { amount, cardNumber, userName, accountNumber, paymentType } = req.body;
+  console.log("reqbody", req.body);
+
+  const errorMessage = userName
+    ? accountNumber
+      ? paymentType === "quick-transfer" || cardNumber
+        ? amount
+          ? amount > 0
+            ? ""
+            : "Amount should be greater than zero!"
+          : "Amount is required!"
+        : "Card Number is required!"
+      : "Account Number is required!"
+    : "Username is required!";
+  if (errorMessage) {
+    throw new CustomError(400, errorMessage);
+  }
+
   const session = await mongoose.startSession();
-  const { amount, type, accountNumber } = req.body;
   try {
     session.startTransaction();
-    if (!accountNumber) {
-      throw new CustomError(400, "Account Number is required!");
-    }
-    if (amount <= 0) {
-      throw new CustomError(400, "Amount should be greater than zero!");
-    }
-    const user = await User.findOne({ accountNumber }, { balance: 1 }).session(
-      session
-    );
-    if (!user) {
+    const sender = await User.findOne(
+      { accountNumber },
+      { balance: 1 }
+    ).session(session);
+    if (!sender) {
       throw new CustomError(404, "This Account does not exist");
     }
-    let balanceAfter;
-    if (type === "expense" || type === "investment") {
-      balanceAfter = user.balance - amount;
-      if (balanceAfter < 0) {
-        throw new CustomError(
-          "transaction declined due to insufficient funds."
-        );
-      }
-    } else {
-      balanceAfter = user.balance + amount;
+    const reciever = await User.findOne(
+      { userName },
+      { balance: 1, accountNumber: 1 }
+    ).session(session);
+    if (!reciever) {
+      throw new CustomError(404, "This reciever does not exist!");
     }
-    const transaction = new Transaction({ ...req.body, balanceAfter });
-    const document = await transaction.save({ session });
-    user.balance = balanceAfter;
-    await user.save({ session });
+
+    let balanceAfter = sender.balance - amount;
+    if (balanceAfter < 0) {
+      throw new CustomError("Transaction declined due to insufficient funds.");
+    }
+    const debit = new Transaction({
+      ...req.body,
+      balanceAfter,
+      accountNumber,
+      type: "debit",
+    });
+    const debitSave = await debit.save({ session });
+    console.log({ debitSave });
+
+    sender.balance -= amount;
+    await sender.save({ session });
+
+    const credit = new Transaction({
+      ...req.body,
+      balanceAfter: reciever.balance + amount,
+      accountNumber: reciever.accountNumber,
+      type: "credit",
+    });
+    const creditSave = await credit.save({ session });
+    console.log({ creditSave });
+    reciever.balance += amount;
+    await reciever.save({ session });
+
     await session.commitTransaction();
-    res.status(200).json({ success: true, data: document });
+    res.status(200).json({ success: true, data: debit });
   } catch (err) {
     await session.abortTransaction();
     next(err);

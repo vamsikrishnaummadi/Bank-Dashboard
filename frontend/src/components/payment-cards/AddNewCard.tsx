@@ -1,8 +1,9 @@
+import { XCircleIcon } from "@heroicons/react/16/solid";
 import { ErrorMessage, Field, Form, Formik, FormikState } from "formik";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
 import { RootState } from "../../store/store";
-import { createCard } from "../../utils/apiService";
+import { customFetch } from "../../utils/apiService";
 
 export interface FormValuesProps {
   cardType: string;
@@ -36,20 +37,25 @@ const validationSchema = Yup.object().shape({
 });
 
 const AddNewCard = () => {
-  const user = useSelector((state: RootState) => state.user.userData.user);
+  const userData = useSelector((state: RootState) => state?.user?.userData);
 
   const submitHandler = async (
     values: FormValuesProps,
     { setSubmitting, setStatus, resetForm }: SetValuesProps
   ) => {
-    const { accountNumber } = user;
-    const res = await createCard({ ...values, accountNumber });
+    const { accountNumber } = userData;
+    const res = await customFetch("/api/cards/create", "POST", {
+      ...values,
+      accountNumber,
+    });
     if (res.success) {
-      setStatus("Form submitted successfully!");
+      console.log(res.message);
+      setStatus(res.message);
       setTimeout(() => {
         resetForm();
-        setStatus("");
       }, 2000);
+    } else {
+      console.log(res.message);
     }
     setSubmitting(false);
   };
@@ -64,7 +70,7 @@ const AddNewCard = () => {
         validationSchema={validationSchema}
         onSubmit={submitHandler}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, status, setStatus }) => (
           <Form className="bg-white mt-3 rounded-xl mr-3 p-6">
             <div className="grid grid-cols-2 gap-5 mt-3">
               <div className="grow">
@@ -87,7 +93,7 @@ const AddNewCard = () => {
                 <ErrorMessage
                   name="cardType"
                   component="div"
-                  className="text-rose-600 font-normal text-sm"
+                  className="text-rose-700 bg-rose-100 border border-rose-400 text-xs rounded mt-2 px-2 py-1"
                 />
               </div>
               <div className="grow">
@@ -106,7 +112,7 @@ const AddNewCard = () => {
                 <ErrorMessage
                   name="cardHolderName"
                   component="div"
-                  className="text-rose-600 font-normal text-sm"
+                  className="text-rose-700 bg-rose-100 border border-rose-400 text-xs rounded mt-2 px-2 py-1"
                 />
               </div>
             </div>
@@ -127,7 +133,7 @@ const AddNewCard = () => {
                 <ErrorMessage
                   name="cardNumber"
                   component="div"
-                  className="text-rose-600 font-normal text-sm"
+                  className="text-rose-700 bg-rose-100 border border-rose-400 text-xs rounded mt-2 px-2 py-1"
                 />
               </div>
               <div className="grow">
@@ -146,10 +152,19 @@ const AddNewCard = () => {
                 <ErrorMessage
                   name="expirationDate"
                   component="div"
-                  className="text-rose-600 font-normal text-sm"
+                  className="text-rose-700 bg-rose-100 border border-rose-400 text-xs rounded mt-2 px-2 py-1"
                 />
               </div>
             </div>
+            {status && (
+              <p className="bg-green-100 border border-green-400 text-green-700 px-2 py-1 mt-3 rounded text-xs">
+                {status}
+                <XCircleIcon
+                  className="w-4 h-4 text-green-700 inline ml-1 mb-1 cursor-pointer"
+                  onClick={() => setStatus("")}
+                />
+              </p>
+            )}
             <button
               type="submit"
               disabled={isSubmitting}

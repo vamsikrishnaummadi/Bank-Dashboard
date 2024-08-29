@@ -12,6 +12,7 @@ export const createCard = async (req, res, next) => {
     cardHolderName,
     cardNumber = await generateCardNumber(),
     expirationDate = calculateExpirationDate(Date.now()),
+    cardType,
   } = req.body;
   try {
     if (!accountNumber) {
@@ -33,13 +34,17 @@ export const createCard = async (req, res, next) => {
       cardNumber,
       expirationDate,
       cvv,
-      blockCard: false,
+      cardStatus: "active",
       pin: hashedPin,
+      transactionLimit: 5000,
+      quickTransferLimit: 500,
+      rewardPoints: 0,
+      ...(cardType === "credit" ? { amountDue: 0 } : null),
     });
     const savedCard = await card.save();
     res.status(200).json({
       success: true,
-      message: "Card Created Successfully",
+      message: `Card Created Successfully. Your pin is ${pin}. Please save the pin, you can only see it once.`,
       data: savedCard,
     });
   } catch (err) {
@@ -69,7 +74,9 @@ export const getCards = async (req, res, next) => {
       .session(session);
     const updatedCards = cards.map((card) => {
       const newCard = card.toObject();
-      newCard.balance = user.balance;
+      if (newCard.cardType === "debit") {
+        newCard.balance = user.balance;
+      }
       return newCard;
     });
     await session.commitTransaction();

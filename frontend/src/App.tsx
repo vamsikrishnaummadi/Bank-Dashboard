@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Accounts from "./components/Accounts/index";
-import CardDetails from "./components/CardDetails";
+import CardDetails from "./components/card-details/index";
 import Investments from "./components/Investments";
 import Loans from "./components/Loans/index";
 import MyPrivileges from "./components/MyPrivileges";

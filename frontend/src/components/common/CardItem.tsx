@@ -8,9 +8,11 @@ interface CreditCardItemProps {
   expirationDate: string;
   cardNumber: string;
   cardType: "debit" | "credit";
+  amountDue: number;
 }
 
 const primaryCardInfo = {
+  amountLabel: "Balance",
   labelColor: "text-[#ffffff]/70",
   textColor: "text-[#ffffff]",
   chipSVG: chipPrimary,
@@ -19,6 +21,7 @@ const primaryCardInfo = {
 };
 
 const secondaryCardInfo = {
+  amountLabel: "Amount Due",
   labelColor: "text-[#718ebf]",
   textColor: "text-[#343c6a]",
   chipSVG: chipSecondary,
@@ -27,14 +30,22 @@ const secondaryCardInfo = {
 };
 
 const CardItem = (props: CreditCardItemProps) => {
-  const { balance, cardHolderName, expirationDate, cardNumber, cardType } =
-    props;
+  const {
+    balance,
+    cardHolderName,
+    expirationDate,
+    cardNumber,
+    cardType,
+    amountDue,
+  } = props;
+
+  const amount = cardType === "debit" ? balance : amountDue;
 
   const location = useLocation();
   const path = location.pathname;
   const navigate = useNavigate();
 
-  const balanceInUSD = balance.toLocaleString("en-US", {
+  const amountInUSD = amount.toLocaleString("en-US", {
     style: "decimal",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -42,6 +53,7 @@ const CardItem = (props: CreditCardItemProps) => {
   });
 
   const {
+    amountLabel,
     labelColor,
     textColor,
     chipSVG,
@@ -65,9 +77,11 @@ const CardItem = (props: CreditCardItemProps) => {
         </h3>
         <div className="flex justify-between">
           <div>
-            <h3 className={`text-xs font-normal ${labelColor}`}>Balance</h3>
+            <h3 className={`text-xs font-normal ${labelColor}`}>
+              {amountLabel}
+            </h3>
             <p className={`text-xs sm:text-sm mb-1 font-semibold ${textColor}`}>
-              ${balanceInUSD}
+              ${amountInUSD}
             </p>
           </div>
           <img src={chipSVG} alt="chip image" className="w-7 lg:w-8 h-7" />

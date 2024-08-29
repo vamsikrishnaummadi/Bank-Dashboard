@@ -36,28 +36,21 @@ const cardSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    blockCard: {
-      type: Boolean,
-      required: true,
-    },
     pin: {
       type: String,
       required: true,
     },
-    cardLimit: {
-      type: Number,
-      required: true,
-    },
-    transactiionLimit: {
+    transactionLimit: {
       type: Number,
       required: true,
     },
     quickTransferLimit: {
       type: Number,
+      required: true,
     },
     amountDue: { type: Number },
     rewardPoints: {
-      type: String,
+      type: Number,
       required: true,
     },
   },

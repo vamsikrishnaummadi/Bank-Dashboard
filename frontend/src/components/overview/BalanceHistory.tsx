@@ -36,7 +36,7 @@ const BalanceHistory = () => {
   };
 
   return (
-    <div className="w-full sm:w-11/12 lg:w-2/3  mb-5 lg:mb-4">
+    <div className="w-full sm:w-11/12 lg:w-3/5  mb-5 lg:mb-4">
       <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-1 mb-2">
         Balance History
       </h2>

@@ -1,6 +1,7 @@
 import MyCards from "../common/MyCards";
 import BalanceHistory from "./BalanceHistory";
 import ExpenseStatistics from "./ExpenseStatistics";
+import QuickTransfer from "./QuickTransfer";
 import RecentTransactions from "./RecentTransactions";
 import WeeklyActivity from "./WeeklyActivity";
 
@@ -15,7 +16,8 @@ const Overview = () => {
         <WeeklyActivity />
         <ExpenseStatistics />
       </div>
-      <div className="mt-4">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between mt-4">
+        <QuickTransfer />
         <BalanceHistory />
       </div>
     </div>

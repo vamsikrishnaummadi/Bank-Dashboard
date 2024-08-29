@@ -1,15 +1,23 @@
 import express from "express";
-import {signup, signin, getUsers, getUserByAccountNumber, updateUser, deleteUser, updatePassword} from "../controllers/user.controller.js";
+import {
+  deleteUser,
+  getUserByAccountNumber,
+  getUsers,
+  signin,
+  signup,
+  updatePassword,
+  updateUser,
+} from "../controllers/user.controller.js";
 
 const router = express.Router();
 
 // Signup API (Path: "/api/auth/signup")
 
-router.post("/auth/signup" , signup);
+router.post("/auth/signup", signup);
 
 // Signin API (Path: "/api/auth/signin")
 
-router.post("/auth/signin", signin); 
+router.post("/auth/signin", signin);
 
 // get All Users API (Path: "/api/users")
 
@@ -30,6 +38,5 @@ router.delete("/users/:accountNumber", deleteUser);
 // update Password of the User (Path: "/users/password/<account number>")
 
 router.put("/users/password/:accountNumber", updatePassword);
-
 
 export default router;
