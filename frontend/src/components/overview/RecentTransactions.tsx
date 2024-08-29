@@ -1,47 +1,65 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { customFetch } from "../../utils/apiService";
 import {
   creditCardYellowCircle,
   dollarIcon,
   paypalIcon,
 } from "./overviewIcons";
 
+const staticTransactions = [
+  {
+    icon: creditCardYellowCircle,
+    description: "Deposit from my card",
+    createdAt: "January 21, 2024",
+    type: "debit",
+    amount: 850,
+  },
+  {
+    icon: paypalIcon,
+    description: "Deposit Paypal",
+    createdAt: "January 25, 2024",
+    type: "credit",
+    amount: 2500,
+  },
+  {
+    icon: dollarIcon,
+    description: "Jemi Wilson",
+    createdAt: "March 03, 2024",
+    type: "credit",
+    amount: 5400,
+  },
+];
+
 const RecentTransactions = () => {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const userData = useSelector((state: RootState) => state?.user?.userData);
 
   useEffect(() => {
-    // fetch("api/transactions?page=1&limit=3").then((res) =>
-    //   res.json().then((parsedRes) => {
-    //     if (parsedRes.success) {
-    //       console.log("rt: " + parsedRes.data);
-    //       setRecentTransactions(parsedRes.data);
-    //     }
-    //   })
-    // );
-    const staticTransactions = [
-      {
-        icon: creditCardYellowCircle,
-        description: "Deposit from my card",
-        transactionDate: "28 january 2021",
-        type: "expense",
-        amount: 850,
-      },
-      {
-        icon: paypalIcon,
-        description: "Deposit Paypal",
-        transactionDate: "25 January 2021",
-        type: "income",
-        amount: 2500,
-      },
-      {
-        icon: dollarIcon,
-        description: "Jemi Wilson",
-        transactionDate: "21 January 2021",
-        type: "income",
-        amount: 5400,
-      },
-    ];
-    setRecentTransactions(staticTransactions);
-  }, []);
+    if (userData?.accountNumber) {
+      customFetch("api/transactions?page=1&limit=3", "POST", {
+        accountNumber: userData.accountNumber,
+      }).then((res) => {
+        if (res.success && res.data.length > 0) {
+          const formattedTransaction = res.data.map(
+            (item: any, index: number) => ({
+              ...item,
+              icon: staticTransactions[index].icon,
+              createdAt: new Date(item.createdAt).toLocaleDateString("en-US", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }),
+            })
+          );
+          setRecentTransactions(formattedTransaction);
+        } else {
+          setRecentTransactions(staticTransactions);
+        }
+      });
+    }
+  }, [userData?.accountNumber]);
 
   return (
     <div className="w-4/5 lg:w-1/3">
@@ -71,7 +89,7 @@ const RecentTransactions = () => {
                     {transaction.description}
                   </p>
                   <p className="text-xs lg:text-sm font-normal">
-                    {transaction.transactionDate}
+                    {transaction.createdAt}
                   </p>
                 </div>
                 <div className="justify-self-end">

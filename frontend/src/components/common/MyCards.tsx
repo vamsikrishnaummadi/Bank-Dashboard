@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { RootState } from "../../store/store";
-import { getCards } from "../../utils/apiService";
+import { customFetch } from "../../utils/apiService";
 import CardItem from "./CardItem";
 
 interface MyCardsProps {
@@ -15,6 +15,7 @@ interface Card {
   cardHolderName: string;
   cardNumber: string;
   cardType: "debit" | "credit";
+  amountDue: number;
 }
 
 const MyCards = (props: MyCardsProps) => {
@@ -23,13 +24,14 @@ const MyCards = (props: MyCardsProps) => {
   const location = useLocation();
   const path = location.pathname;
   const { limit } = props;
-  console.log({ limit });
 
   const [cardsList, setCardsList] = useState<Card[]>([]);
 
   useEffect(() => {
     if (userData?.accountNumber) {
-      getCards(userData.accountNumber, limit).then((res) => {
+      customFetch(`/api/cards?page=1${limit && "&limit=" + limit}`, "POST", {
+        accountNumber: userData.accountNumber,
+      }).then((res) => {
         if (res.success) {
           setCardsList(res.data);
         }
@@ -67,6 +69,7 @@ const MyCards = (props: MyCardsProps) => {
               cardHolderName,
               cardType,
               cardNumber,
+              amountDue,
             } = card;
             return (
               <CardItem
@@ -77,6 +80,7 @@ const MyCards = (props: MyCardsProps) => {
                   cardHolderName,
                   cardNumber,
                   cardType,
+                  amountDue,
                 }}
               />
             );

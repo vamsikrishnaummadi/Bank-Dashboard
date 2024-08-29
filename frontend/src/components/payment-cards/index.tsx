@@ -2,7 +2,6 @@ import MyCards from "../common/MyCards";
 import AddNewCard from "./AddNewCard";
 import CardExpenseStatistics from "./CardExpenseStatistics";
 import CardList from "./CardList";
-import CardSetting from "./CardSetting";
 
 const PaymentCards = () => {
   return (
@@ -14,7 +13,6 @@ const PaymentCards = () => {
       </div>
       <div className="flex flex-col lg:flex-row mt-3">
         <AddNewCard />
-        <CardSetting />
       </div>
     </div>
   );

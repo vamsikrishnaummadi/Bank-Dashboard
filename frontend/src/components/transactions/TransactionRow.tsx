@@ -7,7 +7,7 @@ const commonClasses =
   "text-sm xl:text-base whitespace-nowrap px-2 py-4 border-t border-solid border-[#E6EFF5]";
 
 const TransactionRow = (props: any) => {
-  const { description, transactionId, type, cardNumber, createdAt, amount } =
+  const { description, type, cardNumber, createdAt, amount } =
     props.transaction;
   return (
     <>
@@ -30,10 +30,19 @@ const TransactionRow = (props: any) => {
           )}
           {description}
         </td>
-        <td className={`font-normal ${commonClasses}`}>{transactionId}</td>
         <td className={`font-normal ${commonClasses}`}>{type}</td>
-        <td className={`font-normal ${commonClasses}`}>{cardNumber}</td>
-        <td className={`font-normal ${commonClasses}`}>{createdAt}</td>
+        <td className={`font-normal ${commonClasses}`}>
+          {cardNumber
+            ? cardNumber.slice(0, 4) + " **** **** " + cardNumber.slice(12)
+            : "N/A"}
+        </td>
+        <td className={`font-normal ${commonClasses}`}>
+          {new Date(createdAt).toLocaleDateString("en-US", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </td>
         <td
           className={`font-medium ${commonClasses} ${
             type === "credit" ? "text-[#16DBAA]" : "text-[#FE5C73]"

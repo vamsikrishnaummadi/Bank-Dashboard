@@ -28,8 +28,12 @@ const TransactionListItem = (props: any) => {
             {description}
           </span>
           <br />
-          <span className="text-xs font-normal text-gray-500 text-[#718EBF]">
-            {createdAt}
+          <span className="text-xs font-normal text-gray-500">
+            {new Date(createdAt).toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
           </span>
         </div>
       </div>
