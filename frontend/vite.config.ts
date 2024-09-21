@@ -8,7 +8,9 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: isDevelopment ? "http://localhost:5100" : "",
+        target: isDevelopment
+          ? "http://localhost:5100"
+          : "https://bank-dashboard-kr9b.onrender.com",
         changeOrigin: true,
         secure: !isDevelopment,
       },
