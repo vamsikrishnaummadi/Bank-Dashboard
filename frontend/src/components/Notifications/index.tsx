@@ -1,9 +1,16 @@
-import React, { useEffect, useState, useRef } from "react";
-import {notificationCredit, notificationDebit, notificationFailed, notificationGrant, notificationLoan, notificationOffer} from "./NotificationIcons";
 import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import dateDifference from "../../utils/dateDifference";
+import {
+  notificationCredit,
+  notificationDebit,
+  notificationFailed,
+  notificationGrant,
+  notificationLoan,
+  notificationOffer,
+} from "./NotificationIcons";
 
 interface Notification {
   _id: string;
@@ -23,31 +30,32 @@ interface NotificationResponse {
   totalNotifications: number;
 }
 
-const icons = {
-  "grant" : notificationGrant,
-  "loan" : notificationLoan,
-  "offer" : notificationOffer,
-  "credit" : notificationCredit,
-  "debit" : notificationDebit,
-  "failed" : notificationFailed
+const icons: { [key: string]: string } = {
+  grant: notificationGrant,
+  loan: notificationLoan,
+  offer: notificationOffer,
+  credit: notificationCredit,
+  debit: notificationDebit,
+  failed: notificationFailed,
 };
-const iconsColors = {
-  "credit" : "bg-green-300",
-  "debit" : "bg-red-300",
-  "offer" : "bg-purple-300",
-  "failed" : "bg-red-400",
-  "loan" : "bg-yellow-400",
-  "grant" : "bg-green-400"
+const iconsColors: { [key: string]: string } = {
+  credit: "bg-green-300",
+  debit: "bg-red-300",
+  offer: "bg-purple-300",
+  failed: "bg-red-400",
+  loan: "bg-yellow-400",
+  grant: "bg-green-400",
 };
 
 const Notifications: React.FC = () => {
   const userData = useSelector((state: RootState) => state?.user?.userData);
-  const [notificationData, setNotificationData] = useState<NotificationResponse>({
-    notifications: [],
-    totalPages: 0,
-    currentPage: 0,
-    totalNotifications: 0,
-  });
+  const [notificationData, setNotificationData] =
+    useState<NotificationResponse>({
+      notifications: [],
+      totalPages: 0,
+      currentPage: 0,
+      totalNotifications: 0,
+    });
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
@@ -59,12 +67,17 @@ const Notifications: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await axios.get(`/api/notifications/${userData?.accountNumber}?page=${page}`);
+      const response = await axios.get(
+        `/api/notifications/${userData?.accountNumber}?page=${page}`
+      );
       const newNotifications = response?.data;
 
       setNotificationData((prevData) => ({
         ...prevData,
-        notifications: [...prevData.notifications, ...newNotifications.notifications],
+        notifications: [
+          ...prevData.notifications,
+          ...newNotifications.notifications,
+        ],
         currentPage: newNotifications.currentPage,
         totalPages: newNotifications.totalPages,
         totalNotifications: newNotifications.totalNotifications,
@@ -94,20 +107,43 @@ const Notifications: React.FC = () => {
 
   return (
     <div className="p-4">
-      {notificationData.notifications.map((notification, index) => (
-        <div key={notification._id} className="flex items-center gap-2 p-4 border-b border-gray-300">
-          <div className={`w-12 h-12 sm:w-10 sm:h-10 flex items-center justify-center rounded-full p-1 ${iconsColors[notification?.type]}`}>
-            <img src={icons[notification?.type]} alt={notification?.type} className=""/>
+      {notificationData.notifications.map((notification) => (
+        <div
+          key={notification._id}
+          className="flex items-center gap-2 p-4 border-b border-gray-300"
+        >
+          <div
+            className={`w-12 h-12 sm:w-10 sm:h-10 flex items-center justify-center rounded-full p-1 ${
+              iconsColors[notification?.type]
+            }`}
+          >
+            <img
+              src={icons[notification?.type]}
+              alt={notification?.type}
+              className=""
+            />
           </div>
           <div className="flex-1">
-            <h4 className="text-[#7a7b84] font-semibold text-[13px]">{notification?.type.toUpperCase()} - <span className="text-sm font-medium text-[#7a7b84] sm:hidden">{dateDifference(notification?.createdAt)}</span></h4>
-            <p className="text-[14px] text-[#343C6A] font-bold">{notification?.message}</p>
+            <h4 className="text-[#7a7b84] font-semibold text-[13px]">
+              {notification?.type.toUpperCase()} -{" "}
+              <span className="text-sm font-medium text-[#7a7b84] sm:hidden">
+                {dateDifference(notification?.createdAt)}
+              </span>
+            </h4>
+            <p className="text-[14px] text-[#343C6A] font-bold">
+              {notification?.message}
+            </p>
           </div>
-          <span className="text-sm font-medium text-[#7a7b84] hidden sm:block">{dateDifference(notification?.createdAt)}</span>
+          <span className="text-sm font-medium text-[#7a7b84] hidden sm:block">
+            {dateDifference(notification?.createdAt)}
+          </span>
         </div>
       ))}
       {hasMore && (
-        <div onClick={getMoreNotifications} className="text-center mt-4 text-blue-500">
+        <div
+          onClick={getMoreNotifications}
+          className="text-center mt-4 text-blue-500"
+        >
           {loading ? "Loading more..." : "See More"}
         </div>
       )}

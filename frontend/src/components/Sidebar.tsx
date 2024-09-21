@@ -7,7 +7,6 @@ import {
   HomeIcon,
   Square2StackIcon,
   UserIcon,
-  UserPlusIcon,
   WrenchScrewdriverIcon,
 } from "@heroicons/react/16/solid";
 import React from "react";
@@ -51,12 +50,7 @@ const sideLinks = [
     icon: WrenchScrewdriverIcon,
   },
   {
-    href: "/my-privileges",
-    label: "My Privileges",
-    icon: UserPlusIcon,
-  },
-  {
-    href: "/settings",
+    href: "/settings/profile",
     label: "Settings",
     icon: Cog8ToothIcon,
   },

@@ -1,20 +1,29 @@
-import React, {useState, useEffect, useRef} from "react";
-import { BarChart,CartesianGrid,XAxis,YAxis,Tooltip,Bar, ResponsiveContainer } from "recharts";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
-
-const data: DataPoint[] = [
-  { day: 'Sat', debit: 400, credit: 240 },
-  { day: 'Sun', debit: 300, credit: 139 },
-  { day: 'Mon', debit: 200, credit: 980 },
-  { day: 'Tue', debit: 278, credit: 390 },
-  { day: 'Wed', debit: 189, credit: 480 },
-  { day: 'Thu', debit: 239, credit: 380 },
-  { day: 'Fri', debit: 349, credit: 430 },
+const data = [
+  { day: "Sat", debit: 400, credit: 240 },
+  { day: "Sun", debit: 300, credit: 139 },
+  { day: "Mon", debit: 200, credit: 980 },
+  { day: "Tue", debit: 278, credit: 390 },
+  { day: "Wed", debit: 189, credit: 480 },
+  { day: "Thu", debit: 239, credit: 380 },
+  { day: "Fri", debit: 349, credit: 430 },
 ];
 
-
-const DebitAndCreditOverview:React.FC = () => {
-  const [chartDimensions, setChartDimensions] = useState({ width: 500, height: 200 });
+const DebitAndCreditOverview: React.FC = () => {
+  const [chartDimensions, setChartDimensions] = useState({
+    width: 500,
+    height: 200,
+  });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleResize = () => {
@@ -23,18 +32,18 @@ const DebitAndCreditOverview:React.FC = () => {
 
       // Set dimensions based on screen size
       setChartDimensions({
-        width: isLargeScreen ? 500 : '100%',
-        height: 200
+        width: isLargeScreen ? 500 : 800,
+        height: 200,
       });
     }
   };
 
   useEffect(() => {
     handleResize(); // Set initial dimensions
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -68,25 +77,25 @@ const DebitAndCreditOverview:React.FC = () => {
         </div>
         <div className="w-full" ref={containerRef}>
           <ResponsiveContainer width={chartDimensions.width} height={200}>
-          <BarChart
-            width={500}
-            height={250}
-            data={data}
-            className="rounded-xl w-full"
-            barCategoryGap={100}
-            margin={{ left: 0 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              horizontal={false}
-              vertical={false}
-            />
-            <XAxis dataKey="day" tickLine={false} axisLine={false} />
-            <YAxis tick={false} axisLine={false} />
-            <Tooltip />
-            <Bar dataKey="debit" fill="#FCAA0B" radius={4} barSize={15} />
-            <Bar dataKey="credit" fill="#1A16F3" radius={4} barSize={15} />
-          </BarChart>
+            <BarChart
+              width={500}
+              height={250}
+              data={data}
+              className="rounded-xl w-full"
+              barCategoryGap={100}
+              margin={{ left: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                horizontal={false}
+                vertical={false}
+              />
+              <XAxis dataKey="day" tickLine={false} axisLine={false} />
+              <YAxis tick={false} axisLine={false} />
+              <Tooltip />
+              <Bar dataKey="debit" fill="#FCAA0B" radius={4} barSize={15} />
+              <Bar dataKey="credit" fill="#1A16F3" radius={4} barSize={15} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
