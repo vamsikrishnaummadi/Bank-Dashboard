@@ -13,10 +13,10 @@ import userRoutes from "./routes/user.route.js";
 dotenv.config();
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true, // If you need to allow credentials (cookies, authorization headers)
-  allowedHeaders: ["Content-Type", "Authorization"],
+  origin: process.env.FRONTEND_URL, // Specific origin
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
+  credentials: true, // If you need to support cookies or auth headers
 };
 
 const app = express();
