@@ -24,6 +24,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
 
+app.options("*", cors(corsOptions)); // Enable preflight for all routes
+
 // Routes
 app.get("/api", (req, res) => {
   res.status(200).json({ message: "Welcome to Bank Dashboard Api" });
