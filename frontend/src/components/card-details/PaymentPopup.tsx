@@ -31,6 +31,8 @@ const initialValues = {
   cardPin: ["", "", "", ""],
 };
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const PaymentPopup = ({
   pin,
   transactionLimit,
@@ -61,7 +63,7 @@ const PaymentPopup = ({
     { setSubmitting, setStatus, resetForm }: SetValuesProps
   ) => {
     const { amount, userName, description } = values;
-    const res = await customFetch("/api/transactions/create", "POST", {
+    const res = await customFetch(`${apiBaseUrl}/transactions/create`, "POST", {
       amount,
       userName,
       description,

@@ -1,4 +1,5 @@
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
@@ -9,10 +10,18 @@ import notifictaionRoutes from "./routes/notification.route.js";
 import transactionRoutes from "./routes/transaction.route.js";
 import userRoutes from "./routes/user.route.js";
 
+const corsOptions = {
+  origin: process.env.VITE_FRONTEND_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true, // If you need to allow credentials (cookies, authorization headers)
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors(corsOptions));
 
 // Routes
 app.get("/api", (req, res) => {

@@ -181,6 +181,8 @@ const transactions = [
   },
 ];
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const AllTransactions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [allTransactions, setAllTransactions] = useState<any[]>([]);
@@ -188,7 +190,7 @@ const AllTransactions = () => {
 
   useEffect(() => {
     if (userData.accountNumber) {
-      customFetch("api/transactions", "POST", {
+      customFetch(`${apiBaseUrl}/transactions`, "POST", {
         accountNumber: userData.accountNumber,
       }).then((res) => {
         if (res.success && res.data.length > 0) {

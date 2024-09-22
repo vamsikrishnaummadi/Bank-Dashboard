@@ -20,6 +20,8 @@ export interface SetValuesProps {
   ) => void;
 }
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const initialValues = {
   cardType: "",
   cardHolderName: "",
@@ -44,7 +46,7 @@ const AddNewCard = () => {
     { setSubmitting, setStatus, resetForm }: SetValuesProps
   ) => {
     const { accountNumber } = userData;
-    const res = await customFetch("/api/cards/create", "POST", {
+    const res = await customFetch(`${apiBaseUrl}/cards/create`, "POST", {
       ...values,
       accountNumber,
     });

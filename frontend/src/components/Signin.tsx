@@ -1,57 +1,62 @@
 // src/components/SignIn.tsx
-import React, { useState, useEffect } from 'react';
-import { useDispatch} from 'react-redux';
-import {useNavigate} from "react-router-dom";
-import { setUser } from '../store/userSlice';
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setUser } from "../store/userSlice";
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const Signin: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = Cookies.get('access_token');
-
+  const token = Cookies.get("access_token");
 
   useEffect(() => {
     if (token) {
-      navigate('/');
+      navigate("/");
     }
   }, [navigate, token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      try {
-          const response = await fetch('/api/auth/signin', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({usernameOrEmail: email, password})
-          });
+    e.preventDefault();
+    try {
+      const response = await fetch(`${apiBaseUrl}/auth/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ usernameOrEmail: email, password }),
+      });
 
-          const data = await response.json();
-          if (response.ok && data?.user ) {
-            dispatch(setUser(data?.user));
-            Cookies.set('access_token', data?.accessToken);
-            navigate('/');
-          }else {
-            setError(data.message);
-          }
-
-      }catch(error:any) {
-         setError("Unexpected Error occured, Please try again")
+      const data = await response.json();
+      if (response.ok && data?.user) {
+        dispatch(setUser(data?.user));
+        Cookies.set("access_token", data?.accessToken);
+        navigate("/");
+      } else {
+        setError(data.message);
       }
-  }
+    } catch (error: any) {
+      setError("Unexpected Error occured, Please try again");
+    }
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Welcome BankDash</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Welcome BankDash
+        </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email address
             </label>
             <input
@@ -66,7 +71,10 @@ const Signin: React.FC = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -88,12 +96,18 @@ const Signin: React.FC = () => {
                 type="checkbox"
                 className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-900"
+              >
                 Remember me
               </label>
             </div>
             <div className="text-sm">
-              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <a
+                href="#"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
                 Forgot your password?
               </a>
             </div>

@@ -6,16 +6,17 @@ const isDevelopment = process.env.NODE_ENV === "development";
 export default defineConfig({
   plugins: [react()],
   server: {
-    proxy: {
-      "/api": {
-        target: isDevelopment
-          ? "http://localhost:5100"
-          : "https://bank-dashboard-kr9b.onrender.com",
-        changeOrigin: true,
-        secure: !isDevelopment,
+    ...(isDevelopment && {
+      proxy: {
+        "/api": {
+          target: "http://localhost:5100",
+          changeOrigin: true,
+          secure: false, // secure is false in development
+        },
       },
-    },
+    }),
   },
+
   build: {
     rollupOptions: {
       output: {

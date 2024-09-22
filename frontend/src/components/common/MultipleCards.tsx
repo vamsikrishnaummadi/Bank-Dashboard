@@ -4,7 +4,7 @@ import SingleCard from "./SingleCard";
 
 interface MyCardsProps {
   limit: number | null;
-  customWidth : string | null;
+  customWidth: string | null;
 }
 
 interface Card {
@@ -14,15 +14,17 @@ interface Card {
   cardNumber: string;
 }
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const MultipleCards = (props: MyCardsProps) => {
   const location = useLocation();
   const path = location.pathname;
-  const { limit , customWidth} = props;
+  const { limit, customWidth } = props;
 
   const [cardsList, setCardsList] = useState<Card[]>([]);
 
   useEffect(() => {
-    fetch(`/api/cards?page=1${limit && "&limit=" + limit}`, {
+    fetch(`${apiBaseUrl}/cards?page=1${limit && "&limit=" + limit}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -42,7 +44,9 @@ const MultipleCards = (props: MyCardsProps) => {
   }, [limit]);
 
   return (
-    <div className={customWidth ? customWidth : "w-11/12 lg:w-2/3 mb-5 lg:mb-4"}>
+    <div
+      className={customWidth ? customWidth : "w-11/12 lg:w-2/3 mb-5 lg:mb-4"}
+    >
       <div>
         <div className="mb-2 flex justify-between">
           <h2 className="text-sm sm:text-base lg:text-lg text-[#343C6A] font-semibold ml-0.5">
