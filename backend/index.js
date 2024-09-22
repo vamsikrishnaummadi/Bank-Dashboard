@@ -10,14 +10,15 @@ import notifictaionRoutes from "./routes/notification.route.js";
 import transactionRoutes from "./routes/transaction.route.js";
 import userRoutes from "./routes/user.route.js";
 
+dotenv.config();
+
 const corsOptions = {
-  origin: process.env.VITE_FRONTEND_URL,
+  origin: process.env.FRONTEND_URL,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // If you need to allow credentials (cookies, authorization headers)
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
