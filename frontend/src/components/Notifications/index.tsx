@@ -30,6 +30,8 @@ interface NotificationResponse {
   totalNotifications: number;
 }
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const icons: { [key: string]: string } = {
   grant: notificationGrant,
   loan: notificationLoan,
@@ -68,7 +70,7 @@ const Notifications: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `/api/notifications/${userData?.accountNumber}?page=${page}`
+        `${apiBaseUrl}/notifications/${userData?.accountNumber}?page=${page}`
       );
       const newNotifications = response?.data;
 

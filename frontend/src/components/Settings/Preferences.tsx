@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/userSlice";
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const Preferences: React.FC<{ userData: { [key: string]: any } | null }> = ({
   userData,
 }) => {
@@ -56,7 +58,7 @@ const Preferences: React.FC<{ userData: { [key: string]: any } | null }> = ({
     if (checkChanges()) {
       try {
         const response = await axios.put(
-          `/api/users/${userData?.accountNumber}`,
+          `${apiBaseUrl}/users/${userData?.accountNumber}`,
           formData
         );
         if (response.status === 200) {

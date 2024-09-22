@@ -11,6 +11,8 @@ import CustomSelect from "./CustomSelect";
 
 const initialValues = { userName: "", amount: "" };
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const validationSchema = Yup.object().shape({
   userName: Yup.string().required("User Name is required"),
   amount: Yup.number().test("is-valid", (value) => validateAmount(value, 100)),
@@ -21,7 +23,7 @@ const QuickTransfer = () => {
   const userData = useSelector((state: RootState) => state?.user?.userData);
 
   useEffect(() => {
-    customFetch("/api/users").then((res) => {
+    customFetch(`${apiBaseUrl}/users`).then((res) => {
       if (res.success) {
         setUsers(res.data);
       }
@@ -40,7 +42,7 @@ const QuickTransfer = () => {
     { setSubmitting, setStatus, resetForm }: SetValuesProps
   ) => {
     const { amount, userName } = values;
-    const res = await customFetch("/api/transactions/create", "POST", {
+    const res = await customFetch(`${apiBaseUrl}/transactions/create`, "POST", {
       amount,
       userName,
       description: "Quick Transfer",

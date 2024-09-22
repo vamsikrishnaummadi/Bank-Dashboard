@@ -12,6 +12,8 @@ interface DetailsItemProps {
   content: String | Number;
 }
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const CardDetails = () => {
   const [cardData, setCardData] = useState(null);
 
@@ -20,7 +22,7 @@ const CardDetails = () => {
   const cardNumber = pathname.slice(pathname.lastIndexOf("/") + 1);
 
   useEffect(() => {
-    customFetch(`/api/cards/${cardNumber}`).then((res) => {
+    customFetch(`${apiBaseUrl}/cards/${cardNumber}`).then((res) => {
       if (res.success) {
         setCardData(res.data);
       }
@@ -44,7 +46,7 @@ const CardDetails = () => {
   } = cardData;
 
   const handleBlockCard = async () => {
-    const res = await customFetch(`/api/cards/${cardNumber}`, "PUT", {
+    const res = await customFetch(`${apiBaseUrl}/cards/${cardNumber}`, "PUT", {
       cardStatus: cardStatus === "active" ? "blocked" : "active",
     });
     if (res.success) {
@@ -59,7 +61,7 @@ const CardDetails = () => {
     const prop = values.pin
       ? { pin: hashSync(values.newPin.join("")) }
       : values;
-    const res = await customFetch(`/api/cards/${cardNumber}`, "PUT", {
+    const res = await customFetch(`${apiBaseUrl}/cards/${cardNumber}`, "PUT", {
       ...prop,
     });
     if (res.success) {

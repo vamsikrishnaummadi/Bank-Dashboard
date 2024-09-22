@@ -20,6 +20,7 @@ const icons: { [key: string]: string } = {
   debit: notificationDebit,
   failed: notificationFailed,
 };
+
 const iconsColors: { [key: string]: string } = {
   credit: "bg-green-300",
   debit: "bg-red-300",
@@ -28,6 +29,8 @@ const iconsColors: { [key: string]: string } = {
   loan: "bg-yellow-400",
   grant: "bg-green-400",
 };
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const BellIcon: React.FC = () => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -40,7 +43,7 @@ const BellIcon: React.FC = () => {
   };
 
   const fetchNotifications = async () => {
-    fetch("/api/notifications/" + userData?.accountNumber + "?limit=5")
+    fetch(`${apiBaseUrl}/notifications/` + userData?.accountNumber + "?limit=5")
       .then((res) => res.json())
       .then((data) => {
         setNotifications(data?.notifications);

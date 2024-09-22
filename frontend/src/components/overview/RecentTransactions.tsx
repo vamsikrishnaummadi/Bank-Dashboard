@@ -32,13 +32,15 @@ const staticTransactions = [
   },
 ];
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const RecentTransactions = () => {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const userData = useSelector((state: RootState) => state?.user?.userData);
 
   useEffect(() => {
     if (userData?.accountNumber) {
-      customFetch("api/transactions?page=1&limit=3", "POST", {
+      customFetch(`${apiBaseUrl}/transactions?page=1&limit=3`, "POST", {
         accountNumber: userData.accountNumber,
       }).then((res) => {
         if (res.success && res.data.length > 0) {

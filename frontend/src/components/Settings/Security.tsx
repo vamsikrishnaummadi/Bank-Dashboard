@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const Security: React.FC<{ userData: { [key: string]: any } | null }> = ({
   userData,
 }) => {
@@ -25,7 +27,7 @@ const Security: React.FC<{ userData: { [key: string]: any } | null }> = ({
 
     try {
       const response = await axios.put(
-        `/api/users/password/${userData?.user?.accountNumber}`,
+        `${apiBaseUrl}/users/password/${userData?.user?.accountNumber}`,
         {
           currentPassword: formData.currentPassword,
           newPassword: formData.newPassword,

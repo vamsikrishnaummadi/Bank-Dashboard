@@ -18,6 +18,8 @@ interface Card {
   amountDue: number;
 }
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const MyCards = (props: MyCardsProps) => {
   const userData = useSelector((state: RootState) => state?.user?.userData);
 
@@ -29,9 +31,13 @@ const MyCards = (props: MyCardsProps) => {
 
   useEffect(() => {
     if (userData?.accountNumber) {
-      customFetch(`/api/cards?page=1${limit && "&limit=" + limit}`, "POST", {
-        accountNumber: userData.accountNumber,
-      }).then((res) => {
+      customFetch(
+        `${apiBaseUrl}/cards?page=1${limit && "&limit=" + limit}`,
+        "POST",
+        {
+          accountNumber: userData.accountNumber,
+        }
+      ).then((res) => {
         if (res.success) {
           setCardsList(res.data);
         }
