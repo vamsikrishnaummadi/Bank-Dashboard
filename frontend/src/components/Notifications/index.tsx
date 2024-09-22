@@ -70,7 +70,9 @@ const Notifications: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${apiBaseUrl}/notifications/${userData?.accountNumber}?page=${page}`
+        `${apiBaseUrl}/notifications/${
+          userData?.accountNumber || 0
+        }?page=${page}`
       );
       const newNotifications = response?.data;
 

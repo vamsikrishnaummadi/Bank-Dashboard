@@ -58,7 +58,7 @@ const Preferences: React.FC<{ userData: { [key: string]: any } | null }> = ({
     if (checkChanges()) {
       try {
         const response = await axios.put(
-          `${apiBaseUrl}/users/${userData?.accountNumber}`,
+          `${apiBaseUrl}/users/${userData?.accountNumber || 0}`,
           formData
         );
         if (response.status === 200) {
