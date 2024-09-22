@@ -43,7 +43,9 @@ const BellIcon: React.FC = () => {
   };
 
   const fetchNotifications = async () => {
-    fetch(`${apiBaseUrl}/notifications/` + userData?.accountNumber + "?limit=5")
+    fetch(
+      `${apiBaseUrl}/notifications/` + userData?.accountNumber || 0 + "?limit=5"
+    )
       .then((res) => res.json())
       .then((data) => {
         setNotifications(data?.notifications);
